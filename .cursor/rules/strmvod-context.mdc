@@ -1,0 +1,19 @@
+---
+description: Core context and constraints for the strmvod Dispatcharr plugin in this workspace
+alwaysApply: true
+---
+
+# strmvod / Dispatcharr Workspace Context
+
+- This workspace contains the `strmvod` plugin (`strmvod_cmc0619`) for Dispatcharr.
+- The `dispatcharr_strmvod` directory is **manually populated by the user** and represents a snapshot of Dispatcharr's `/config` and `/vod` directories.
+- The manual copy exists because the actual mapped network drives (where `/config` and `/vod` live) are **not directly accessible** from the Windows machine where Cursor is running.
+- When reasoning about files under `dispatcharr_strmvod`, treat them as a mirror of the corresponding paths under Dispatcharr's `/config` and `/vod` directories, but remember they may be slightly out of date and are **read-only from Cursor's perspective**.
+
+# Project Goal and Constraints
+
+- **Primary goal**: Fix the bug in `strmvod` that prevents `.strm` file creation for **series/TV shows**.
+- **Movie behavior is correct**: `.strm` file creation for movies is currently working and is considered the source of truth for expected behavior.
+- **Do not change movie behavior**: Avoid modifying logic that affects movies unless it is strictly necessary to fix the series bug.
+- **No regressions for movies**: Any change touching shared code must be carefully reasoned about to ensure it does **not** break or alter existing movie functionality. When in doubt, preserve current movie behavior.
+

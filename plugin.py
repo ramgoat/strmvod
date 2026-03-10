@@ -121,7 +121,7 @@ class Plugin:
     """VOD .STRM Writer Plugin for Dispatcharr proxy."""
 
     name = "VOD .STRM Writer (Proxy)"
-    version = "0.3.5"
+    version = "0.3.6"
     description = "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy."
 
     fields = [
@@ -595,6 +595,23 @@ class Plugin:
         response.raise_for_status()
 
         if logger is not None:
+            # Log request
+            # Access the underlying request object
+            req = response.request
+
+            logger.info("--- [FULL REQUEST DEBUG] ---")
+            logger.info("URL: %s %s", req.method, req.url)
+            logger.info("Request Headers: %s", req.headers)
+
+            # If you had a body (POST/PUT), you'd log it here:
+            if req.body:
+                logger.info("Request Body: %s", req.body)
+
+            logger.info("Response Status: %d", response.status_code)
+            logger.info("Response Headers: %s", response.headers)
+            logger.info("--- [END REQUEST DEBUG] ---")
+
+            # Log response
             try:
                 body_text = response.text or ""
             except Exception:

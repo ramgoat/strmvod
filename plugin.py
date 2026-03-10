@@ -121,7 +121,7 @@ class Plugin:
     """VOD .STRM Writer Plugin for Dispatcharr proxy."""
 
     name = "VOD .STRM Writer (Proxy)"
-    version = "0.3.4"
+    version = "0.3.5"
     description = "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy."
 
     fields = [
@@ -594,8 +594,6 @@ class Plugin:
             response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         response.raise_for_status()
 
-        logger.info("[API DEBUG] Response body -> %s",response.json())
-
         if logger is not None:
             try:
                 body_text = response.text or ""
@@ -609,6 +607,7 @@ class Plugin:
                 len(response.content or b""),
                 body_preview,
             )
+            logger.info("[API DEBUG] Response body -> %s",response.json())
 
         return response.json() if response.content else {}
 

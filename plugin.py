@@ -121,7 +121,7 @@ class Plugin:
     """VOD .STRM Writer Plugin for Dispatcharr proxy."""
 
     name = "VOD .STRM Writer (Proxy)"
-    version = "0.3.0"
+    version = "0.3.4"
     description = "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy."
 
     fields = [
@@ -575,8 +575,11 @@ class Plugin:
         return response.json().get("access", "")
 
     def _get_headers(self, token: str) -> Dict[str, str]:
-        """Build authorization headers."""
-        return {"Authorization": f"Bearer {token}"} if token else {}
+        """Build headers for Dispatcharr API (Accept + Authorization)."""
+        headers: Dict[str, str] = {"Accept": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        return headers
 
     def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable, logger: Any = None) -> Dict[str, Any]:
         """Make authenticated API request with auto-relogin on 401.
@@ -590,6 +593,8 @@ class Plugin:
             token = relogin_callback()
             response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         response.raise_for_status()
+
+        logger.info("[API DEBUG] Response body -> %s",response.json())
 
         if logger is not None:
             try:

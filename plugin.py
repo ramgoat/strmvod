@@ -126,12 +126,12 @@ class Plugin:
 
     fields = [
         {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "dispatcharr:9191", "help_text": "NO scheme. Example: dispatcharr:9191 (Docker service name)"},
-        {"id": "api_username", "label": "API Username", "type": "string", "default": "tv"},
-        {"id": "api_password", "label": "API Password", "type": "string", "default": "tv"},
+        {"id": "api_username", "label": "API Username", "type": "string", "default": "strmvod"},
+        {"id": "api_password", "label": "API Password", "type": "string", "default": ""},
         {"id": "tmdb_api_key", "label": "TMDB API Key (optional)", "type": "string", "default": "", "help_text": "Get free API key from themoviedb.org. If empty, uses original names."},
         {"id": "write_nfo_files", "label": "Write NFO Files", "type": "boolean", "default": False, "help_text": "Write .nfo metadata files for Jellyfin/Emby/Plex. Requires TMDB API key."},
-        {"id": "movies_root", "label": "Movies Root", "type": "string", "default": "/VODs/movies"},
-        {"id": "series_root", "label": "Series Root", "type": "string", "default": "/VODs/series"},
+        {"id": "movies_root", "label": "Movies Root", "type": "string", "default": "/vod/movies"},
+        {"id": "series_root", "label": "Series Root", "type": "string", "default": "/vod/series"},
         {"id": "probe_urls", "label": "Probe URLs (HEAD)", "type": "boolean", "default": False},
         {"id": "cleanup_removed", "label": "Remove Stale .strm", "type": "boolean", "default": False},
         {"id": "dry_run", "label": "Dry Run", "type": "boolean", "default": False, "help_text": "Simulates the run without writing or deleting files. Limits processing to 1000 items. Note: Scheduled runs always run for real."},
@@ -737,7 +737,7 @@ class Plugin:
     
     def _write_movies(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
         """Write .strm files for movies."""
-        root = settings.get("movies_root", "/VODs/movies")
+        root = settings.get("movies_root", "/vod/movies")
         page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))
@@ -855,7 +855,7 @@ class Plugin:
 
     def _write_series(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
         """Write .strm files for series episodes."""
-        root = settings.get("series_root", "/VODs/series")
+        root = settings.get("series_root", "/vod/series")
         page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))

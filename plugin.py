@@ -23,6 +23,7 @@ API_TIMEOUT = 30
 SAFE_NAME_RE = re.compile(r'[\\/:*?"<>|\t\r\n\']+')
 DEFAULT_MAX_NAME_LENGTH = 180
 TMDB_RATE_LIMIT_DELAY = 0.26
+PROVIDER_INFO_SYNC_DELAY = 1.0  # seconds after provider-info request so Dispatcharr can complete sync
 DRY_RUN_LIMIT = 1000
 
 
@@ -575,8 +576,15 @@ class Plugin:
         return response.json().get("access", "")
 
     def _get_headers(self, token: str) -> Dict[str, str]:
-        """Build headers for Dispatcharr API (Accept + Authorization)."""
-        headers: Dict[str, str] = {"Accept": "application/json"}
+        """Build headers for Dispatcharr API (Accept, User-Agent, Authorization).
+
+        Use a conventional User-Agent so the server returns full responses; some
+        backends return minimal/empty bodies for the default python-requests UA.
+        """
+        headers: Dict[str, str] = {
+            "Accept": "application/json",
+            "User-Agent": "DispatcharrStrmvod/1.0",
+        }
         if token:
             headers["Authorization"] = f"Bearer {token}"
         return headers
@@ -594,24 +602,18 @@ class Plugin:
             response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         response.raise_for_status()
 
-        if logger is not None:
-            # Log request
-            # Access the underlying request object
-            req = response.request
+        data = response.json() if response.content else {}
 
+        if logger is not None:
+            req = response.request
             logger.info("--- [FULL REQUEST DEBUG] ---")
             logger.info("URL: %s %s", req.method, req.url)
             logger.info("Request Headers: %s", req.headers)
-
-            # If you had a body (POST/PUT), you'd log it here:
             if req.body:
                 logger.info("Request Body: %s", req.body)
-
             logger.info("Response Status: %d", response.status_code)
             logger.info("Response Headers: %s", response.headers)
             logger.info("--- [END REQUEST DEBUG] ---")
-
-            # Log response
             try:
                 body_text = response.text or ""
             except Exception:
@@ -624,9 +626,9 @@ class Plugin:
                 len(response.content or b""),
                 body_preview,
             )
-            logger.info("[API DEBUG] Response body -> %s",response.json())
+            logger.info("[API DEBUG] Response body -> %s", data)
 
-        return response.json() if response.content else {}
+        return data
 
     def _paginate(self, first_path: str, token: str, relogin_callback: Callable, logger: Any, dry_run: bool = False) -> List[Dict[str, Any]]:
         """Follow pagination until exhausted or dry_run limit is hit."""
@@ -933,26 +935,35 @@ class Plugin:
             series_dir = os.path.join(root, series_dir_name)
 
             try:
-                episodes_data = self._api_request(
-                    f"/api/vod/series/{series_id}/episodes/",
+                provider_info = self._api_request(
+                    f"/api/vod/series/{series_id}/provider-info/?include_episodes=true",
                     token,
                     relogin_callback,
                     logger=logger if debug_log else None,
                 )
+                time.sleep(PROVIDER_INFO_SYNC_DELAY)
             except Exception as e:
                 errors += 1
                 if verbose:
                     logger.exception("[SERIES %s] episodes fetch error: %s", series_id, e)
                 continue
 
-            # Diagnostic logging to understand what the episodes endpoint returns
+            # Flatten episodes from provider-info shape: {"1": [ep, ...], "2": [ep, ...]} -> list
+            episodes_dict = provider_info.get("episodes") if isinstance(provider_info, dict) else {}
+            episodes_data = []
+            if isinstance(episodes_dict, dict):
+                for _season_key, ep_list in episodes_dict.items():
+                    if isinstance(ep_list, list):
+                        episodes_data.extend(ep_list)
+
+            # Diagnostic logging
             if debug_log:
                 logger.info(
-                    "[SERIES %s] episodes_data diagnostics: type=%s, bool=%s, preview=%s",
+                    "[SERIES %s] episodes_data diagnostics: type=%s, bool=%s, count=%s",
                     series_id,
                     type(episodes_data).__name__,
                     bool(episodes_data),
-                    str(episodes_data)[:300],
+                    len(episodes_data),
                 )
 
             if not episodes_data:

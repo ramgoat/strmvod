@@ -125,7 +125,7 @@ class Plugin:
     description = "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy."
 
     fields = [
-        {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "tv.local:9191", "help_text": "NO scheme. Example: tv.local:9191"},
+        {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "dispatcharr:9191", "help_text": "NO scheme. Example: dispatcharr:9191 (Docker service name)"},
         {"id": "api_username", "label": "API Username", "type": "string", "default": "tv"},
         {"id": "api_password", "label": "API Password", "type": "string", "default": "tv"},
         {"id": "tmdb_api_key", "label": "TMDB API Key (optional)", "type": "string", "default": "", "help_text": "Get free API key from themoviedb.org. If empty, uses original names."},
@@ -147,7 +147,7 @@ class Plugin:
     ]
 
     def __init__(self):
-        self.api_base = "http://127.0.0.1:9191"
+        self.api_base = "http://dispatcharr:9191"  # default; overwritten from vod_strm_settings.json
         self.last_tmdb_request = 0
         self.settings_file = "/data/vod_strm_settings.json"
         self.debug_log_file = "/data/vod_strm_debug.log"
@@ -194,6 +194,7 @@ class Plugin:
                 self.saved_settings = {}
         except Exception:
             self.saved_settings = {}
+        self.api_base = "http://" + normalize_host(self.saved_settings.get("dispatcharr_host", "dispatcharr:9191"))
 
     def _save_settings(self, settings):
         """Save settings to disk"""
@@ -201,6 +202,7 @@ class Plugin:
             with open(self.settings_file, 'w') as f:
                 json.dump(settings, f, indent=2)
             self.saved_settings = settings
+            self.api_base = "http://" + normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
         except Exception:
             pass
 
@@ -576,14 +578,33 @@ class Plugin:
         """Build authorization headers."""
         return {"Authorization": f"Bearer {token}"} if token else {}
 
-    def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable) -> Dict[str, Any]:
-        """Make authenticated API request with auto-relogin on 401."""
+    def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable, logger: Any = None) -> Dict[str, Any]:
+        """Make authenticated API request with auto-relogin on 401.
+
+        When a logger is provided, log basic response diagnostics to help debug
+        API behavior (URL, status, length, and a short body preview).
+        """
         url = url_or_path if url_or_path.startswith("http") else f"{self.api_base.rstrip('/')}{url_or_path}"
         response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         if response.status_code == 401 and relogin_callback:
             token = relogin_callback()
             response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         response.raise_for_status()
+
+        if logger is not None:
+            try:
+                body_text = response.text or ""
+            except Exception:
+                body_text = ""
+            body_preview = body_text[:500] if body_text else "(empty)"
+            logger.info(
+                "[API DEBUG] %s -> status=%d, length=%d, body=%s",
+                url,
+                response.status_code,
+                len(response.content or b""),
+                body_preview,
+            )
+
         return response.json() if response.content else {}
 
     def _paginate(self, first_path: str, token: str, relogin_callback: Callable, logger: Any, dry_run: bool = False) -> List[Dict[str, Any]]:
@@ -719,7 +740,7 @@ class Plugin:
         probe = bool(settings.get("probe_urls", False))
         cleanup = bool(settings.get("cleanup_removed", False))
         write_nfo = bool(settings.get("write_nfo_files", False))
-        dispatch_host = normalize_host(settings.get("dispatcharr_host", "tv.local:9191"))
+        dispatch_host = normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
         tmdb_api_key = settings.get("tmdb_api_key", "").strip()
         debug_log = bool(settings.get("debug_log", False))
 
@@ -837,7 +858,7 @@ class Plugin:
         probe = bool(settings.get("probe_urls", False))
         cleanup = bool(settings.get("cleanup_removed", False))
         write_nfo = bool(settings.get("write_nfo_files", False))
-        dispatch_host = normalize_host(settings.get("dispatcharr_host", "tv.local:9191"))
+        dispatch_host = normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
         tmdb_api_key = settings.get("tmdb_api_key", "").strip()
         debug_log = bool(settings.get("debug_log", False))
 
@@ -891,12 +912,27 @@ class Plugin:
             series_dir = os.path.join(root, series_dir_name)
 
             try:
-                episodes_data = self._api_request(f"/api/vod/series/{series_id}/episodes/", token, relogin_callback)
+                episodes_data = self._api_request(
+                    f"/api/vod/series/{series_id}/episodes/",
+                    token,
+                    relogin_callback,
+                    logger=logger if debug_log else None,
+                )
             except Exception as e:
                 errors += 1
                 if verbose:
                     logger.exception("[SERIES %s] episodes fetch error: %s", series_id, e)
                 continue
+
+            # Diagnostic logging to understand what the episodes endpoint returns
+            if debug_log:
+                logger.info(
+                    "[SERIES %s] episodes_data diagnostics: type=%s, bool=%s, preview=%s",
+                    series_id,
+                    type(episodes_data).__name__,
+                    bool(episodes_data),
+                    str(episodes_data)[:300],
+                )
 
             if not episodes_data:
                 skipped += 1

@@ -12,7 +12,7 @@ todos:
     content: Deploy updated plugin, run series action, and analyze the debug log to determine which scenario (A/B/C) applies
     status: pending
   - id: fix-root-cause
-    content: "Based on log output, apply the appropriate fix (most likely: unwrap paginated response or switch to _paginate)"
+    content: "Add Accept: application/json to _get_headers() so Dispatcharr returns full episode array to the plugin"
     status: pending
 isProject: false
 ---
@@ -70,15 +70,29 @@ logger.info("[SERIES %s] episodes_data: type=%s, bool=%s, preview=%s",
 
 `_paginate` already calls `_api_request` without the `logger` parameter, so it continues to work identically (the new parameter defaults to `None`).
 
-## Phase 2: Fix the Root Cause (after log analysis)
+## Phase 2: Fix the Root Cause (request headers so Dispatcharr returns episode data)
 
-Based on what the enhanced logging reveals, the fix will fall into one of these scenarios:
+### What the logs and API response showed
 
-- **Scenario A -- Paginated response:** The episodes endpoint returns `{"results": [...], "next": ...}`. Fix: switch from `_api_request` to `_paginate`, or extract `episodes_data.get("results", episodes_data)` after the call.
-- **Scenario B -- Empty response from Dispatcharr:** The endpoint returns empty data for all series, meaning the issue is upstream in Dispatcharr (not strmvod). The logging will confirm this.
-- **Scenario C -- Wrong endpoint URL:** The `/api/vod/series/{id}/episodes/` path may have changed in the Dispatcharr API. The logging will show a 404 or unexpected response format.
+- **Plugin receives:** `status=200, length=2, body=[]` — the HTTP response body is literally the two characters `[]`. So the server is sending an empty array to the plugin; this is not a parsing bug.
+- **Postman (same URL):** Returns a full JSON array of episode objects. So Dispatcharr returns different content depending on the request.
+- **Dispatcharr episodes response format** (from [api_vod_series_4444_episodes.json](C:\Users\micro\Downloads\dispatcharr_strmvod\2026-03-10\dispatcharr_api_response\api_vod_series_4444_episodes.json)): a **raw JSON array** of episode objects. Each element has at top level: `uuid`, `name`, `season_number`, `episode_number`, `id`, `series` (nested), etc. No pagination wrapper (no `"results"` key). The plugin’s existing logic (`episode.get("uuid")`, `episode.get("season_number")`, etc.) already matches this shape; no response-structure change is needed once the plugin receives the array.
 
-The most likely scenario is **A** (paginated response not being unwrapped), given that every other API call in the plugin uses `_paginate` to handle the standard Dispatcharr pagination format.
+### Root cause
+
+The plugin’s request differs from Postman. The plugin only sends `Authorization: Bearer <token>` ([_get_headers](D:\git\strmvod_cmc0619\plugin.py) in `plugin.py`). It does not send `Accept: application/json`. Many backends (including Django REST framework) vary the response by `Accept`; without an explicit JSON accept, the server may return a minimal or empty payload. Postman typically sends `Accept: application/json`, which would explain the full response there and the empty `[]` to the plugin.
+
+### Approach for resolving the bug
+
+1. **Add `Accept: application/json` to all Dispatcharr API requests**
+  In [plugin.py](D:\git\strmvod_cmc0619\plugin.py), update `_get_headers()` so that every `_api_request` (and thus every call that uses it, including series list, movies, and episodes) sends:
+  - `Accept: application/json`
+  - Keep existing `Authorization: Bearer <token>` when a token is present.
+   This aligns the plugin’s requests with what Postman sends and should make Dispatcharr return the full episodes array (and any other endpoints that were affected).
+2. **No response-structure or parsing change**
+  The episodes endpoint returns a list; the plugin already treats `episodes_data` as a list and iterates with `episode.get("uuid")`, etc. No need to unwrap a `"results"` key or switch to `_paginate` for this endpoint.
+3. **If empty responses persist after the header change**
+  Then investigate: same auth credentials as Postman (e.g. user/permissions), same base URL and path, and any proxy or middleware that might strip or alter the body for requests without an `Accept` header. The next step would be to log the exact request headers sent by the plugin for the episodes call and compare with Postman.
 
 ## Summary of Changes
 
@@ -86,3 +100,4 @@ All changes are in a single file: [plugin.py](D:\git\strmvod_cmc0619\plugin.py)
 
 - `_api_request` method (line 579): add optional `logger` param + response logging
 - `_write_series` method (line 894): pass logger, add episodes_data diagnostic logging
+

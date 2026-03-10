@@ -20,14 +20,17 @@ jobs:
         id: get_tag
         run: echo "TAG_NAME=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
 
-      - name: Create zip archive (exclude existing archives)
+      - name: Create zip archive (plugin package layout)
         run: |
           TAG="${{ steps.get_tag.outputs.TAG_NAME }}"
           ZIP_NAME="strmvod_${TAG}.zip"
+          PKG_DIR="strmvod"
 
-          # Create zip while excluding common archive types already in the repo
-          zip -r "$ZIP_NAME" . \
-            -x '*.zip' '*.tar' '*.tar.gz' '*.tgz' '*.gz' '*.bz2' '*.xz' '*.7z' '*.rar'
+          # Match original artifact: single top-level folder "strmvod/" with only plugin files
+          mkdir -p "$PKG_DIR"
+          cp plugin.py README.txt __init__.py "$PKG_DIR/"
+          zip -r "$ZIP_NAME" "$PKG_DIR"
+          rm -rf "$PKG_DIR"
 
       - name: Create GitHub Release and upload asset
         uses: softprops/action-gh-release@v2

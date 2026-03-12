@@ -1,0 +1,29 @@
+{
+  "name": "VOD .STRM Writer (Proxy)",
+  "version": "0.4.0",
+  "description": "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy.",
+  "author": "Ramgoat",
+  "help_url": "https://github.com/Dispatcharr/Dispatcharr",
+  "fields": [
+    { "id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string" },
+    { "id": "api_username", "label": "API Username", "type": "string" },
+    { "id": "api_password", "label": "API Password", "type": "string" },
+    { "id": "tmdb_api_key", "label": "TMDB API Key (optional)", "type": "string" },
+    { "id": "write_nfo_files", "label": "Write NFO Files", "type": "boolean" },
+    { "id": "movies_root", "label": "Movies Root", "type": "string" },
+    { "id": "series_root", "label": "Series Root", "type": "string" },
+    { "id": "probe_urls", "label": "Probe URLs (HEAD)", "type": "boolean" },
+    { "id": "cleanup_removed", "label": "Remove Stale .strm", "type": "boolean" },
+    { "id": "dry_run", "label": "Dry Run", "type": "boolean" },
+    { "id": "verbose", "label": "Verbose Per-Item Logs", "type": "boolean" },
+    { "id": "debug_log", "label": "Debug Logging", "type": "boolean" },
+    { "id": "scheduled_times_movies", "label": "Movie Schedule (24-hour format)", "type": "string" },
+    { "id": "scheduled_times_series", "label": "Series Schedule (24-hour format)", "type": "string" }
+  ],
+  "actions": [
+    { "id": "write_movies", "label": "Write Movie .STRM Files" },
+    { "id": "write_series", "label": "Write Series .STRM Files" }
+  ]
+}
+
+

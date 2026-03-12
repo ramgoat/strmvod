@@ -26,9 +26,9 @@ jobs:
           ZIP_NAME="strmvod_${TAG}.zip"
           PKG_DIR="strmvod"
 
-          # Match original artifact: single top-level folder "strmvod/" with only plugin files
+          # Package plugin files from ./plugin into a single top-level folder "strmvod/"
           mkdir -p "$PKG_DIR"
-          cp plugin.py README.txt __init__.py "$PKG_DIR/"
+          cp -r plugin/* "$PKG_DIR/"
           zip -r "$ZIP_NAME" "$PKG_DIR"
           rm -rf "$PKG_DIR"
 

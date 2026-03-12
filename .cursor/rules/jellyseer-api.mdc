@@ -1,0 +1,66 @@
+---
+description: Jellyseer API examples — download status, search by TMDB ID
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Jellyseer API Examples
+
+## Retrieve Download Status
+
+**Endpoint:** `GET /api/v1/movie/{jellyseer_id}`
+
+**Request:**
+```bash
+curl -X 'GET' \
+  'https://request.ramgoat.ca/api/v1/movie/{jellyseer_id}' \
+  -H 'accept: application/json' \
+  -H 'X-Api-Key: ***'
+```
+
+- Status is in `mediaInfo.status` and `mediaInfo.status4k`.
+- **Status values:** `5` = Available, `4` = Partially Available, `3` = Requested.
+- `mediaInfo` is omitted from the response when the series does not exist.
+
+## Search by TheMovieDB ID
+
+**Endpoint:** `GET /api/v1/search`
+
+**Request:**
+```bash
+curl -X 'GET' \
+  'https://request.ramgoat.ca/api/v1/search?query=tmdb%3A228026&page=1&language=en' \
+  -H 'accept: application/json' \
+  -H 'X-Api-Key: ***'
+```
+
+**Query:** Use `query=tmdb%3A{tmdb_id}` (e.g. `tmdb:228026`).
+
+**Response shape:**
+```json
+{
+  "page": 1,
+  "totalPages": 1,
+  "totalResults": 1,
+  "results": [
+    {
+      "id": 228026,
+      "firstAirDate": "2024-02-22",
+      "genreIds": [80, 18],
+      "mediaType": "tv",
+      "name": "Law & Order Toronto: Criminal Intent",
+      "originCountry": ["CA"],
+      "originalLanguage": "en",
+      "originalName": "Law & Order Toronto: Criminal Intent",
+      "overview": "...",
+      "popularity": 12.3319,
+      "voteAverage": 6.9,
+      "voteCount": 27,
+      "backdropPath": "/u3HllpiOl4C9FnjSAQeh3ftB4cv.jpg",
+      "posterPath": "/eqD7W5EGue5Nvg0BNEnoRyMQAcz.jpg"
+    }
+  ]
+}
+```
+
+Use `results[].id` as the Jellyseer ID for the movie/download-status endpoint.

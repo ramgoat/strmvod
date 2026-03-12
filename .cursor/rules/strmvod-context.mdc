@@ -9,6 +9,7 @@ alwaysApply: true
 - The `dispatcharr_strmvod` directory is **manually populated by the user** and represents a snapshot of Dispatcharr's `/config` and `/vod` directories.
 - The manual copy exists because the actual mapped network drives (where `/config` and `/vod` live) are **not directly accessible** from the Windows machine where Cursor is running.
 - When reasoning about files under `dispatcharr_strmvod`, treat them as a mirror of the corresponding paths under Dispatcharr's `/config` and `/vod` directories, but remember they may be slightly out of date and are **read-only from Cursor's perspective**.
+- The `Dispatcharr` directory contains the source code for the Dispatcharr application and should be used to when developing the plugin to ensure compatibility and a functional plugin.
 
 # Project Goal and Constraints
 

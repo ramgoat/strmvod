@@ -23,7 +23,6 @@ API_TIMEOUT = 30
 SAFE_NAME_RE = re.compile(r'[\\/:*?"<>|\t\r\n\']+')
 DEFAULT_MAX_NAME_LENGTH = 180
 TMDB_RATE_LIMIT_DELAY = 0.26
-PROVIDER_INFO_SYNC_DELAY = 1.0  # seconds after provider-info request so Dispatcharr can complete sync
 DRY_RUN_LIMIT = 1000
 
 
@@ -122,17 +121,17 @@ class Plugin:
     """VOD .STRM Writer Plugin for Dispatcharr proxy."""
 
     name = "VOD .STRM Writer (Proxy)"
-    version = "0.4.0"
+    version = "0.3.0"
     description = "Writes .strm and .nfo files for Movies & Series using Dispatcharr proxy."
 
     fields = [
-        {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "dispatcharr:9191", "help_text": "NO scheme. Example: dispatcharr:9191 (Docker service name)"},
-        {"id": "api_username", "label": "API Username", "type": "string", "default": "strmvod"},
-        {"id": "api_password", "label": "API Password", "type": "string", "default": ""},
+        {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "tv.local:9191", "help_text": "NO scheme. Example: tv.local:9191"},
+        {"id": "api_username", "label": "API Username", "type": "string", "default": "tv"},
+        {"id": "api_password", "label": "API Password", "type": "string", "default": "tv"},
         {"id": "tmdb_api_key", "label": "TMDB API Key (optional)", "type": "string", "default": "", "help_text": "Get free API key from themoviedb.org. If empty, uses original names."},
         {"id": "write_nfo_files", "label": "Write NFO Files", "type": "boolean", "default": False, "help_text": "Write .nfo metadata files for Jellyfin/Emby/Plex. Requires TMDB API key."},
-        {"id": "movies_root", "label": "Movies Root", "type": "string", "default": "/vod/movies"},
-        {"id": "series_root", "label": "Series Root", "type": "string", "default": "/vod/series"},
+        {"id": "movies_root", "label": "Movies Root", "type": "string", "default": "/VODs/movies"},
+        {"id": "series_root", "label": "Series Root", "type": "string", "default": "/VODs/series"},
         {"id": "probe_urls", "label": "Probe URLs (HEAD)", "type": "boolean", "default": False},
         {"id": "cleanup_removed", "label": "Remove Stale .strm", "type": "boolean", "default": False},
         {"id": "dry_run", "label": "Dry Run", "type": "boolean", "default": False, "help_text": "Simulates the run without writing or deleting files. Limits processing to 1000 items. Note: Scheduled runs always run for real."},
@@ -148,7 +147,7 @@ class Plugin:
     ]
 
     def __init__(self):
-        self.api_base = "http://dispatcharr:9191"  # default; overwritten from vod_strm_settings.json
+        self.api_base = "http://127.0.0.1:9191"
         self.last_tmdb_request = 0
         self.settings_file = "/data/vod_strm_settings.json"
         self.debug_log_file = "/data/vod_strm_debug.log"
@@ -195,7 +194,6 @@ class Plugin:
                 self.saved_settings = {}
         except Exception:
             self.saved_settings = {}
-        self.api_base = "http://" + normalize_host(self.saved_settings.get("dispatcharr_host", "dispatcharr:9191"))
 
     def _save_settings(self, settings):
         """Save settings to disk"""
@@ -203,7 +201,6 @@ class Plugin:
             with open(self.settings_file, 'w') as f:
                 json.dump(settings, f, indent=2)
             self.saved_settings = settings
-            self.api_base = "http://" + normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
         except Exception:
             pass
 
@@ -576,59 +573,18 @@ class Plugin:
         return response.json().get("access", "")
 
     def _get_headers(self, token: str) -> Dict[str, str]:
-        """Build headers for Dispatcharr API (Accept, User-Agent, Authorization).
+        """Build authorization headers."""
+        return {"Authorization": f"Bearer {token}"} if token else {}
 
-        Use a conventional User-Agent so the server returns full responses; some
-        backends return minimal/empty bodies for the default python-requests UA.
-        """
-        headers: Dict[str, str] = {
-            "Accept": "application/json",
-            "User-Agent": "DispatcharrStrmvod/1.0",
-        }
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
-        return headers
-
-    def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable, logger: Any = None) -> Dict[str, Any]:
-        """Make authenticated API request with auto-relogin on 401.
-
-        When a logger is provided, log basic response diagnostics to help debug
-        API behavior (URL, status, length, and a short body preview).
-        """
+    def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable) -> Dict[str, Any]:
+        """Make authenticated API request with auto-relogin on 401."""
         url = url_or_path if url_or_path.startswith("http") else f"{self.api_base.rstrip('/')}{url_or_path}"
         response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         if response.status_code == 401 and relogin_callback:
             token = relogin_callback()
             response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
         response.raise_for_status()
-
-        data = response.json() if response.content else {}
-
-        if logger is not None:
-            req = response.request
-            logger.info("--- [FULL REQUEST DEBUG] ---")
-            logger.info("URL: %s %s", req.method, req.url)
-            logger.info("Request Headers: %s", req.headers)
-            if req.body:
-                logger.info("Request Body: %s", req.body)
-            logger.info("Response Status: %d", response.status_code)
-            logger.info("Response Headers: %s", response.headers)
-            logger.info("--- [END REQUEST DEBUG] ---")
-            try:
-                body_text = response.text or ""
-            except Exception:
-                body_text = ""
-            body_preview = body_text[:500] if body_text else "(empty)"
-            logger.info(
-                "[API DEBUG] %s -> status=%d, length=%d, body=%s",
-                url,
-                response.status_code,
-                len(response.content or b""),
-                body_preview,
-            )
-            logger.info("[API DEBUG] Response body -> %s", data)
-
-        return data
+        return response.json() if response.content else {}
 
     def _paginate(self, first_path: str, token: str, relogin_callback: Callable, logger: Any, dry_run: bool = False) -> List[Dict[str, Any]]:
         """Follow pagination until exhausted or dry_run limit is hit."""
@@ -756,14 +712,14 @@ class Plugin:
     
     def _write_movies(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
         """Write .strm files for movies."""
-        root = settings.get("movies_root", "/vod/movies")
+        root = settings.get("movies_root", "/VODs/movies")
         page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))
         probe = bool(settings.get("probe_urls", False))
         cleanup = bool(settings.get("cleanup_removed", False))
         write_nfo = bool(settings.get("write_nfo_files", False))
-        dispatch_host = normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
+        dispatch_host = normalize_host(settings.get("dispatcharr_host", "tv.local:9191"))
         tmdb_api_key = settings.get("tmdb_api_key", "").strip()
         debug_log = bool(settings.get("debug_log", False))
 
@@ -874,14 +830,14 @@ class Plugin:
 
     def _write_series(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
         """Write .strm files for series episodes."""
-        root = settings.get("series_root", "/vod/series")
+        root = settings.get("series_root", "/VODs/series")
         page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))
         probe = bool(settings.get("probe_urls", False))
         cleanup = bool(settings.get("cleanup_removed", False))
         write_nfo = bool(settings.get("write_nfo_files", False))
-        dispatch_host = normalize_host(settings.get("dispatcharr_host", "dispatcharr:9191"))
+        dispatch_host = normalize_host(settings.get("dispatcharr_host", "tv.local:9191"))
         tmdb_api_key = settings.get("tmdb_api_key", "").strip()
         debug_log = bool(settings.get("debug_log", False))
 
@@ -935,36 +891,12 @@ class Plugin:
             series_dir = os.path.join(root, series_dir_name)
 
             try:
-                provider_info = self._api_request(
-                    f"/api/vod/series/{series_id}/provider-info/?include_episodes=true",
-                    token,
-                    relogin_callback,
-                    logger=logger if debug_log else None,
-                )
-                time.sleep(PROVIDER_INFO_SYNC_DELAY)
+                episodes_data = self._api_request(f"/api/vod/series/{series_id}/episodes/", token, relogin_callback)
             except Exception as e:
                 errors += 1
                 if verbose:
                     logger.exception("[SERIES %s] episodes fetch error: %s", series_id, e)
                 continue
-
-            # Flatten episodes from provider-info shape: {"1": [ep, ...], "2": [ep, ...]} -> list
-            episodes_dict = provider_info.get("episodes") if isinstance(provider_info, dict) else {}
-            episodes_data = []
-            if isinstance(episodes_dict, dict):
-                for _season_key, ep_list in episodes_dict.items():
-                    if isinstance(ep_list, list):
-                        episodes_data.extend(ep_list)
-
-            # Diagnostic logging
-            if debug_log:
-                logger.info(
-                    "[SERIES %s] episodes_data diagnostics: type=%s, bool=%s, count=%s",
-                    series_id,
-                    type(episodes_data).__name__,
-                    bool(episodes_data),
-                    len(episodes_data),
-                )
 
             if not episodes_data:
                 skipped += 1
@@ -1093,4 +1025,3 @@ plugin = Plugin()
 fields = Plugin.fields
 
 actions = Plugin.actions
-

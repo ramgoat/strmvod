@@ -1,0 +1,223 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - Streaming
+  version: 1.0.0
+  description: API documentation for Dispatcharr - Streaming endpoints
+paths:
+  /{username}/{password}/{channel_id}:
+    get:
+      operationId: root_retrieve
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: password
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /live/{username}/{password}/{channel_id}:
+    get:
+      operationId: live_retrieve
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: password
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - live
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/change_stream/{channel_id}:
+    post:
+      operationId: proxy_ts_change_stream_create
+      description: Change stream URL for existing channel with enhanced diagnostics
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/next_stream/{channel_id}:
+    post:
+      operationId: proxy_ts_next_stream_create
+      description: Switch to the next available stream for a channel
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/status:
+    get:
+      operationId: proxy_ts_status_retrieve
+      description: 'Returns status information about channels with detail level based on request:
+
+        - /status/ returns basic summary of all channels
+
+        - /status/{channel_id} returns detailed info about specific channel'
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/status/{channel_id}:
+    get:
+      operationId: proxy_ts_status_retrieve_2
+      description: 'Returns status information about channels with detail level based on request:
+
+        - /status/ returns basic summary of all channels
+
+        - /status/{channel_id} returns detailed info about specific channel'
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/stop/{channel_id}:
+    post:
+      operationId: proxy_ts_stop_create
+      description: Stop a channel and release all associated resources using PubSub events
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: proxy_ts_stop_destroy
+      description: Stop a channel and release all associated resources using PubSub events
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /proxy/ts/stop_client/{channel_id}:
+    post:
+      operationId: proxy_ts_stop_client_create
+      description: Stop a specific client connection using existing client management
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /proxy/ts/stream/{channel_id}:
+    get:
+      operationId: proxy_ts_stream_retrieve
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /proxy/vod/stop_client/:
+    post:
+      operationId: proxy_vod_stop_client_create
+      description: Stop a specific VOD client connection using stop signal mechanism
+      tags:
+      - proxy
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

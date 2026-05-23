@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - Backups
+  version: 1.0.0
+  description: API documentation for Dispatcharr - Backups endpoints
+paths:
+  /api/backups/:
+    get:
+      operationId: api_backups_retrieve
+      description: List all available backup files.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/{filename}/delete/:
+    delete:
+      operationId: api_backups_delete_destroy
+      description: Delete a backup file.
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/backups/{filename}/download/:
+    get:
+      operationId: api_backups_download_retrieve
+      description: 'Download a backup file.
+
+
+        Requires either:
+
+        - Valid admin authentication, OR
+
+        - Valid download_token query parameter'
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/backups/{filename}/download-token/:
+    get:
+      operationId: api_backups_download_token_retrieve
+      description: Get a signed token for downloading a backup file.
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/{filename}/restore/:
+    post:
+      operationId: api_backups_restore_create
+      description: 'Restore from a backup file (async via Celery). WARNING: This will flush the database!'
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/create/:
+    post:
+      operationId: api_backups_create_create
+      description: Create a new backup (async via Celery).
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/schedule/:
+    get:
+      operationId: api_backups_schedule_retrieve
+      description: Get backup schedule settings.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/schedule/update/:
+    put:
+      operationId: api_backups_schedule_update_update
+      description: Update backup schedule settings.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/backups/status/{task_id}/:
+    get:
+      operationId: api_backups_status_retrieve
+      description: 'Check the status of a backup/restore task.
+
+
+        Requires either:
+
+        - Valid admin authentication, OR
+
+        - Valid task_token query parameter'
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/backups/upload/:
+    post:
+      operationId: api_backups_upload_create
+      description: Upload a backup file for restoration.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

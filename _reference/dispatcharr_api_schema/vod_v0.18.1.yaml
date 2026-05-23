@@ -1,0 +1,1177 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - VOD
+  version: 1.0.0
+  description: API documentation for Dispatcharr - VOD endpoints
+paths:
+  /api/vod/all/:
+    get:
+      operationId: api_vod_all_list
+      description: Override list to handle unified content properly - database-level approach
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMovieList'
+          description: ''
+  /api/vod/all/{id}/:
+    get:
+      operationId: api_vod_all_retrieve
+      description: ViewSet that combines Movies and Series for unified 'All' view
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Movie.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+          description: ''
+  /api/vod/categories/:
+    get:
+      operationId: api_vod_categories_list
+      description: Override list to ensure Uncategorized categories and relations exist for all XC accounts with VOD enabled
+      parameters:
+      - in: query
+        name: category_type
+        schema:
+          type: string
+          enum:
+          - movie
+          - series
+        description: 'Type of content this category contains
+
+
+          * `movie` - Movie
+
+          * `series` - Series'
+      - in: query
+        name: m3u_account
+        schema:
+          type: number
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VODCategory'
+          description: ''
+  /api/vod/categories/{id}/:
+    get:
+      operationId: api_vod_categories_retrieve
+      description: ViewSet for VOD Categories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODCategory'
+          description: ''
+  /api/vod/episodes/:
+    get:
+      operationId: api_vod_episodes_list
+      description: ViewSet for Episode content
+      parameters:
+      - in: query
+        name: episode_number
+        schema:
+          type: integer
+      - in: query
+        name: m3u_account
+        schema:
+          type: number
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: season_number
+        schema:
+          type: integer
+      - in: query
+        name: series
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEpisodeList'
+          description: ''
+  /api/vod/episodes/{id}/:
+    get:
+      operationId: api_vod_episodes_retrieve
+      description: ViewSet for Episode content
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Episode.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Episode'
+          description: ''
+  /api/vod/movies/:
+    get:
+      operationId: api_vod_movies_list
+      description: ViewSet for Movie content
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: m3u_account
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: year
+        schema:
+          type: integer
+      - in: query
+        name: year_gte
+        schema:
+          type: integer
+      - in: query
+        name: year_lte
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMovieList'
+          description: ''
+  /api/vod/movies/{id}/:
+    get:
+      operationId: api_vod_movies_retrieve
+      description: ViewSet for Movie content
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Movie.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+          description: ''
+  /api/vod/movies/{id}/provider-info/:
+    get:
+      operationId: api_vod_movies_provider_info_retrieve
+      description: Get detailed movie information from the original provider, throttled to 24h.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Movie.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+          description: ''
+  /api/vod/movies/{id}/providers/:
+    get:
+      operationId: api_vod_movies_providers_retrieve
+      description: Get all providers (M3U accounts) that have this movie
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Movie.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+          description: ''
+  /api/vod/series/:
+    get:
+      operationId: api_vod_series_list
+      description: ViewSet for Series management
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: m3u_account
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: year
+        schema:
+          type: integer
+      - in: query
+        name: year_gte
+        schema:
+          type: integer
+      - in: query
+        name: year_lte
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSeriesList'
+          description: ''
+  /api/vod/series/{id}/:
+    get:
+      operationId: api_vod_series_retrieve
+      description: ViewSet for Series management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Series.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          description: ''
+  /api/vod/series/{id}/episodes/:
+    get:
+      operationId: api_vod_series_episodes_retrieve
+      description: Get episodes for this series with provider information
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Series.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          description: ''
+  /api/vod/series/{id}/provider-info/:
+    get:
+      operationId: api_vod_series_provider_info_retrieve
+      description: Get detailed series information, refreshing from provider if needed
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Series.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          description: ''
+  /api/vod/series/{id}/providers/:
+    get:
+      operationId: api_vod_series_providers_retrieve
+      description: Get all providers (M3U accounts) that have this series
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Series.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          description: ''
+  /api/vod/vodlogos/:
+    get:
+      operationId: api_vod_vodlogos_list
+      description: ViewSet for VOD Logo management
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVODLogoList'
+          description: ''
+    post:
+      operationId: api_vod_vodlogos_create
+      description: ViewSet for VOD Logo management
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+  /api/vod/vodlogos/{id}/:
+    get:
+      operationId: api_vod_vodlogos_retrieve
+      description: ViewSet for VOD Logo management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+    put:
+      operationId: api_vod_vodlogos_update
+      description: ViewSet for VOD Logo management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Logo.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+    patch:
+      operationId: api_vod_vodlogos_partial_update
+      description: ViewSet for VOD Logo management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Logo.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVODLogo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVODLogo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVODLogo'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+    delete:
+      operationId: api_vod_vodlogos_destroy
+      description: ViewSet for VOD Logo management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vod/vodlogos/{id}/cache/:
+    get:
+      operationId: api_vod_vodlogos_cache_retrieve
+      description: Streams the VOD logo file, whether it's local or remote.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this VOD Logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+  /api/vod/vodlogos/bulk-delete/:
+    delete:
+      operationId: api_vod_vodlogos_bulk_delete_destroy
+      description: Delete multiple VOD logos at once
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vod/vodlogos/cleanup/:
+    post:
+      operationId: api_vod_vodlogos_cleanup_create
+      description: Delete all VOD logos that are not used by any movies or series
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VODLogo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VODLogo'
+          description: ''
+components:
+  schemas:
+    CategoryTypeEnum:
+      enum:
+      - movie
+      - series
+      type: string
+      description: '* `movie` - Movie
+
+        * `series` - Series'
+    Episode:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        series:
+          allOf:
+          - $ref: '#/components/schemas/Series'
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        air_date:
+          type: string
+          format: date
+          nullable: true
+        rating:
+          type: string
+          nullable: true
+          maxLength: 10
+        duration_secs:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Duration in seconds
+        season_number:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        episode_number:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        tmdb_id:
+          type: string
+          nullable: true
+          description: TMDB ID for metadata
+          maxLength: 50
+        imdb_id:
+          type: string
+          nullable: true
+          description: IMDB ID for metadata
+          maxLength: 50
+        custom_properties:
+          nullable: true
+          description: Custom properties for this episode
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - series
+      - updated_at
+      - uuid
+    M3UVODCategoryRelation:
+      type: object
+      properties:
+        category:
+          type: integer
+        m3u_account:
+          type: integer
+        enabled:
+          type: boolean
+          description: Set to false to deactivate this category for the M3U account
+      required:
+      - category
+      - m3u_account
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        logo:
+          allOf:
+          - $ref: '#/components/schemas/VODLogo'
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        rating:
+          type: string
+          nullable: true
+          maxLength: 10
+        genre:
+          type: string
+          nullable: true
+          maxLength: 255
+        duration_secs:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Duration in seconds
+        tmdb_id:
+          type: string
+          nullable: true
+          description: TMDB ID for metadata
+          maxLength: 50
+        imdb_id:
+          type: string
+          nullable: true
+          description: IMDB ID for metadata
+          maxLength: 50
+        custom_properties:
+          nullable: true
+          description: Additional metadata and properties for the movie
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - logo
+      - name
+      - updated_at
+      - uuid
+    PaginatedEpisodeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Episode'
+    PaginatedMovieList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movie'
+    PaginatedSeriesList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Series'
+    PaginatedVODLogoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/VODLogo'
+    PatchedVODLogo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+        cache_url:
+          type: string
+          readOnly: true
+        movie_count:
+          type: string
+          readOnly: true
+        series_count:
+          type: string
+          readOnly: true
+        is_used:
+          type: string
+          readOnly: true
+        item_names:
+          type: string
+          readOnly: true
+    Series:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        logo:
+          allOf:
+          - $ref: '#/components/schemas/VODLogo'
+          readOnly: true
+        episode_count:
+          type: string
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        rating:
+          type: string
+          nullable: true
+          maxLength: 10
+        genre:
+          type: string
+          nullable: true
+          maxLength: 255
+        tmdb_id:
+          type: string
+          nullable: true
+          description: TMDB ID for metadata
+          maxLength: 50
+        imdb_id:
+          type: string
+          nullable: true
+          description: IMDB ID for metadata
+          maxLength: 50
+        custom_properties:
+          nullable: true
+          description: Additional metadata and properties for the series
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - episode_count
+      - id
+      - logo
+      - name
+      - updated_at
+      - uuid
+    VODCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        category_type:
+          allOf:
+          - $ref: '#/components/schemas/CategoryTypeEnum'
+          default: movie
+          description: 'Type of content this category contains
+
+
+            * `movie` - Movie
+
+            * `series` - Series'
+        category_type_display:
+          type: string
+          readOnly: true
+        m3u_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/M3UVODCategoryRelation'
+          readOnly: true
+      required:
+      - category_type_display
+      - id
+      - m3u_accounts
+      - name
+    VODLogo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+        cache_url:
+          type: string
+          readOnly: true
+        movie_count:
+          type: string
+          readOnly: true
+        series_count:
+          type: string
+          readOnly: true
+        is_used:
+          type: string
+          readOnly: true
+        item_names:
+          type: string
+          readOnly: true
+      required:
+      - cache_url
+      - id
+      - is_used
+      - item_names
+      - movie_count
+      - name
+      - series_count
+      - url
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

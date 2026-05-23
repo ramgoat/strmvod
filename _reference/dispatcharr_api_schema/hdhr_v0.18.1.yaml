@@ -1,0 +1,517 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - HDHR
+  version: 1.0.0
+  description: API documentation for Dispatcharr - HDHR endpoints
+paths:
+  /api/hdhr/device.xml:
+    get:
+      operationId: api_hdhr_device.xml_retrieve
+      description: Retrieve the HDHomeRun device XML configuration
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/hdhr/devices/:
+    get:
+      operationId: api_hdhr_devices_list
+      description: Handles CRUD operations for HDHomeRun devices
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    post:
+      operationId: api_hdhr_devices_create
+      description: Handles CRUD operations for HDHomeRun devices
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+  /api/hdhr/devices/{id}/:
+    get:
+      operationId: api_hdhr_devices_retrieve
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    put:
+      operationId: api_hdhr_devices_update
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    patch:
+      operationId: api_hdhr_devices_partial_update
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    delete:
+      operationId: api_hdhr_devices_destroy
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/hdhr/discover.json:
+    get:
+      operationId: api_hdhr_discover.json_retrieve
+      description: Retrieve HDHomeRun device discovery information
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/hdhr/lineup.json:
+    get:
+      operationId: api_hdhr_lineup.json_retrieve
+      description: Retrieve the available channel lineup
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/hdhr/lineup_status.json:
+    get:
+      operationId: api_hdhr_lineup_status.json_retrieve
+      description: Retrieve the HDHomeRun lineup status
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/{profile}/discover.json:
+    get:
+      operationId: hdhr_discover.json_retrieve_2
+      description: Retrieve HDHomeRun device discovery information
+      parameters:
+      - in: path
+        name: profile
+        schema:
+          type: string
+        required: true
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/{profile}/lineup.json:
+    get:
+      operationId: hdhr_lineup.json_retrieve_2
+      description: Retrieve the available channel lineup
+      parameters:
+      - in: path
+        name: profile
+        schema:
+          type: string
+        required: true
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/{profile}/lineup_status.json:
+    get:
+      operationId: hdhr_lineup_status.json_retrieve_2
+      description: Retrieve the HDHomeRun lineup status
+      parameters:
+      - in: path
+        name: profile
+        schema:
+          type: string
+        required: true
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/device.xml:
+    get:
+      operationId: hdhr_device.xml_retrieve
+      description: Retrieve the HDHomeRun device XML configuration
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/devices/:
+    get:
+      operationId: hdhr_devices_list
+      description: Handles CRUD operations for HDHomeRun devices
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    post:
+      operationId: hdhr_devices_create
+      description: Handles CRUD operations for HDHomeRun devices
+      tags:
+      - hdhr
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+  /hdhr/devices/{id}/:
+    get:
+      operationId: hdhr_devices_retrieve
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    put:
+      operationId: hdhr_devices_update
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - hdhr
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HDHRDevice'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    patch:
+      operationId: hdhr_devices_partial_update
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - hdhr
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHDHRDevice'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HDHRDevice'
+          description: ''
+    delete:
+      operationId: hdhr_devices_destroy
+      description: Handles CRUD operations for HDHomeRun devices
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hdhr device.
+        required: true
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /hdhr/discover.json:
+    get:
+      operationId: hdhr_discover.json_retrieve
+      description: Retrieve HDHomeRun device discovery information
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/lineup.json:
+    get:
+      operationId: hdhr_lineup.json_retrieve
+      description: Retrieve the available channel lineup
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /hdhr/lineup_status.json:
+    get:
+      operationId: hdhr_lineup_status.json_retrieve
+      description: Retrieve the HDHomeRun lineup status
+      tags:
+      - hdhr
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    HDHRDevice:
+      type: object
+      description: Serializer for HDHomeRun device information
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        friendly_name:
+          type: string
+          maxLength: 100
+        device_id:
+          type: string
+          maxLength: 32
+        tuner_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - device_id
+      - id
+    PatchedHDHRDevice:
+      type: object
+      description: Serializer for HDHomeRun device information
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        friendly_name:
+          type: string
+          maxLength: 100
+        device_id:
+          type: string
+          maxLength: 32
+        tuner_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

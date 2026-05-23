@@ -1,0 +1,1116 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - Core
+  version: 1.0.0
+  description: API documentation for Dispatcharr - Core endpoints
+paths:
+  /api/core/notifications/:
+    get:
+      operationId: api_core_notifications_list
+      description: 'List all active notifications for the current user.
+
+        Optionally filter by dismissed status.'
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemNotification'
+          description: ''
+    post:
+      operationId: api_core_notifications_create
+      description: 'API endpoint for system notifications.
+
+        Users can view active notifications and dismiss them.
+
+        Admins can create and manage notifications.'
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+  /api/core/notifications/{id}/:
+    get:
+      operationId: api_core_notifications_retrieve
+      description: 'API endpoint for system notifications.
+
+        Users can view active notifications and dismiss them.
+
+        Admins can create and manage notifications.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+    put:
+      operationId: api_core_notifications_update
+      description: 'API endpoint for system notifications.
+
+        Users can view active notifications and dismiss them.
+
+        Admins can create and manage notifications.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+    patch:
+      operationId: api_core_notifications_partial_update
+      description: 'API endpoint for system notifications.
+
+        Users can view active notifications and dismiss them.
+
+        Admins can create and manage notifications.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSystemNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSystemNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSystemNotification'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+    delete:
+      operationId: api_core_notifications_destroy
+      description: 'API endpoint for system notifications.
+
+        Users can view active notifications and dismiss them.
+
+        Admins can create and manage notifications.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/core/notifications/{id}/dismiss/:
+    post:
+      operationId: api_core_notifications_dismiss_create
+      description: Dismiss a notification for the current user.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+  /api/core/notifications/count/:
+    get:
+      operationId: api_core_notifications_count_retrieve
+      description: Get count of unread notifications.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+  /api/core/notifications/dismiss-all/:
+    post:
+      operationId: api_core_notifications_dismiss_all_create
+      description: Dismiss all notifications for the current user.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SystemNotification'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemNotification'
+          description: ''
+  /api/core/rehash-streams/:
+    post:
+      operationId: api_core_rehash_streams_create
+      description: Trigger rehashing of all streams
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/core/settings/:
+    get:
+      operationId: api_core_settings_list
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoreSettings'
+          description: ''
+    post:
+      operationId: api_core_settings_create
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreSettings'
+          description: ''
+  /api/core/settings/{id}/:
+    get:
+      operationId: api_core_settings_retrieve
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this core settings.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreSettings'
+          description: ''
+    put:
+      operationId: api_core_settings_update
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this core settings.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreSettings'
+          description: ''
+    patch:
+      operationId: api_core_settings_partial_update
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this core settings.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCoreSettings'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCoreSettings'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCoreSettings'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreSettings'
+          description: ''
+    delete:
+      operationId: api_core_settings_destroy
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this core settings.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/core/settings/check/:
+    post:
+      operationId: api_core_settings_check_create
+      description: 'API endpoint for editing core settings.
+
+        This is treated as a singleton: only one instance should exist.'
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoreSettings'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreSettings'
+          description: ''
+  /api/core/settings/env/:
+    get:
+      operationId: api_core_settings_env_retrieve
+      description: Endpoint for environment details
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/core/streamprofiles/:
+    get:
+      operationId: api_core_streamprofiles_list
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StreamProfile'
+          description: ''
+    post:
+      operationId: api_core_streamprofiles_create
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamProfile'
+          description: ''
+  /api/core/streamprofiles/{id}/:
+    get:
+      operationId: api_core_streamprofiles_retrieve
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stream profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamProfile'
+          description: ''
+    put:
+      operationId: api_core_streamprofiles_update
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stream profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StreamProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamProfile'
+          description: ''
+    patch:
+      operationId: api_core_streamprofiles_partial_update
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stream profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStreamProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStreamProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStreamProfile'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamProfile'
+          description: ''
+    delete:
+      operationId: api_core_streamprofiles_destroy
+      description: API endpoint that allows stream profiles to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stream profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/core/system-events/:
+    get:
+      operationId: api_core_system_events_retrieve
+      description: "Get recent system events (channel start/stop, buffering, client connections, etc.)\n\nQuery Parameters:\n\
+        \    limit: Number of events to return per page (default: 100, max: 1000)\n    offset: Number of events to skip (for\
+        \ pagination, default: 0)\n    event_type: Filter by specific event type (optional)"
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/core/timezones/:
+    get:
+      operationId: api_core_timezones_retrieve
+      description: Get list of all supported timezones
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/core/useragents/:
+    get:
+      operationId: api_core_useragents_list
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAgent'
+          description: ''
+    post:
+      operationId: api_core_useragents_create
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgent'
+          description: ''
+  /api/core/useragents/{id}/:
+    get:
+      operationId: api_core_useragents_retrieve
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user agent.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgent'
+          description: ''
+    put:
+      operationId: api_core_useragents_update
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user agent.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAgent'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgent'
+          description: ''
+    patch:
+      operationId: api_core_useragents_partial_update
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user agent.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAgent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAgent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAgent'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgent'
+          description: ''
+    delete:
+      operationId: api_core_useragents_destroy
+      description: API endpoint that allows user agents to be viewed, created, edited, or deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user agent.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/core/version/:
+    get:
+      operationId: api_core_version_retrieve
+      description: Get application version information
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    CoreSettings:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        value: {}
+      required:
+      - id
+      - key
+      - name
+    NotificationTypeEnum:
+      enum:
+      - version_update
+      - setting_recommendation
+      - announcement
+      - warning
+      - info
+      type: string
+      description: '* `version_update` - Version Update Available
+
+        * `setting_recommendation` - Recommended Setting Change
+
+        * `announcement` - System Announcement
+
+        * `warning` - Warning
+
+        * `info` - Information'
+    PatchedCoreSettings:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        value: {}
+    PatchedStreamProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name of the stream profile
+          maxLength: 255
+        command:
+          type: string
+          description: Command to execute (e.g., 'yt.sh', 'streamlink', or 'vlc')
+          maxLength: 255
+        parameters:
+          type: string
+          description: Command-line parameters. Use {userAgent} and {streamUrl} as placeholders.
+        is_active:
+          type: boolean
+          description: Whether this profile is active
+        user_agent:
+          type: integer
+          nullable: true
+          description: Optional user agent to use. If not set, you can fall back to a default.
+        locked:
+          type: boolean
+          description: Protected - can't be deleted or modified
+    PatchedSystemNotification:
+      type: object
+      description: Serializer for system notifications.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notification_key:
+          type: string
+          maxLength: 255
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        title:
+          type: string
+          maxLength: 255
+        message:
+          type: string
+        action_data: {}
+        is_active:
+          type: boolean
+        admin_only:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_dismissed:
+          type: string
+          readOnly: true
+        source:
+          $ref: '#/components/schemas/SourceEnum'
+    PatchedUserAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: The User-Agent name.
+          maxLength: 512
+        user_agent:
+          type: string
+          description: The complete User-Agent string sent by the client.
+          maxLength: 512
+        description:
+          type: string
+          description: An optional description of the client or device type.
+          maxLength: 255
+        is_active:
+          type: boolean
+          description: Whether this user agent is currently allowed/recognized.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PriorityEnum:
+      enum:
+      - low
+      - normal
+      - high
+      - critical
+      type: string
+      description: '* `low` - Low
+
+        * `normal` - Normal
+
+        * `high` - High
+
+        * `critical` - Critical'
+    SourceEnum:
+      enum:
+      - system
+      - developer
+      type: string
+      description: '* `system` - System Generated
+
+        * `developer` - Developer Notification'
+    StreamProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name of the stream profile
+          maxLength: 255
+        command:
+          type: string
+          description: Command to execute (e.g., 'yt.sh', 'streamlink', or 'vlc')
+          maxLength: 255
+        parameters:
+          type: string
+          description: Command-line parameters. Use {userAgent} and {streamUrl} as placeholders.
+        is_active:
+          type: boolean
+          description: Whether this profile is active
+        user_agent:
+          type: integer
+          nullable: true
+          description: Optional user agent to use. If not set, you can fall back to a default.
+        locked:
+          type: boolean
+          description: Protected - can't be deleted or modified
+      required:
+      - id
+      - name
+    SystemNotification:
+      type: object
+      description: Serializer for system notifications.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notification_key:
+          type: string
+          maxLength: 255
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        title:
+          type: string
+          maxLength: 255
+        message:
+          type: string
+        action_data: {}
+        is_active:
+          type: boolean
+        admin_only:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_dismissed:
+          type: string
+          readOnly: true
+        source:
+          $ref: '#/components/schemas/SourceEnum'
+      required:
+      - created_at
+      - id
+      - is_dismissed
+      - message
+      - notification_key
+      - title
+    UserAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: The User-Agent name.
+          maxLength: 512
+        user_agent:
+          type: string
+          description: The complete User-Agent string sent by the client.
+          maxLength: 512
+        description:
+          type: string
+          description: An optional description of the client or device type.
+          maxLength: 255
+        is_active:
+          type: boolean
+          description: Whether this user agent is currently allowed/recognized.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+      - user_agent
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

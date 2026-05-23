@@ -1,0 +1,2920 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - Channels
+  version: 1.0.0
+  description: API documentation for Dispatcharr - Channels endpoints
+paths:
+  /api/channels/channels/:
+    get:
+      operationId: api_channels_channels_list
+      parameters:
+      - in: query
+        name: channel_group
+        schema:
+          type: string
+      - in: query
+        name: epg
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChannelList'
+          description: ''
+    post:
+      operationId: api_channels_channels_create
+      description: Override create to handle channel profile membership
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/{channel_id}/streams/:
+    get:
+      operationId: api_channels_channels_streams_retrieve
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/channels/{id}/:
+    get:
+      operationId: api_channels_channels_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+    put:
+      operationId: api_channels_channels_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+    patch:
+      operationId: api_channels_channels_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+    delete:
+      operationId: api_channels_channels_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/channels/{id}/match-epg/:
+    post:
+      operationId: api_channels_channels_match_epg_create_2
+      description: Try to auto-match this specific channel with EPG data.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/{id}/reorder/:
+    post:
+      operationId: api_channels_channels_reorder_create
+      description: Reorder a channel by moving it after another channel (or to the start if insert_after_id is null). The
+        channel will receive the next whole number after the target channel, and all subsequent channels will be renumbered
+        accordingly.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderChannelRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReorderChannelRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReorderChannelRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/{id}/set-epg/:
+    post:
+      operationId: api_channels_channels_set_epg_create
+      description: Set EPG data for a channel and refresh program data
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetEpgRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SetEpgRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SetEpgRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+  /api/channels/channels/assign/:
+    post:
+      operationId: api_channels_channels_assign_create
+      description: Auto-assign channel_number in bulk by an ordered list of channel IDs.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignChannelsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignChannelsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignChannelsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/batch-set-epg/:
+    post:
+      operationId: api_channels_channels_batch_set_epg_create
+      description: Associate multiple channels with EPG data without triggering a full refresh
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchSetEpgRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BatchSetEpgRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BatchSetEpgRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/bulk-delete/:
+    delete:
+      operationId: api_channels_channels_bulk_delete_destroy
+      description: Bulk delete channels by ID
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/channels/edit/bulk/:
+    patch:
+      operationId: api_channels_channels_edit_bulk_partial_update
+      description: 'Bulk edit channels efficiently.
+
+        Validates all updates first, then applies in a single transaction.'
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChannel'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/from-stream/:
+    post:
+      operationId: api_channels_channels_from_stream_create
+      description: Create a new channel from an existing stream. If 'channel_number' is provided, it will be used (if available);
+        otherwise, the next available channel number is assigned. If 'channel_profile_ids' is provided, the channel will only
+        be added to those profiles. Accepts either a single ID or an array of IDs.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FromStreamRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FromStreamRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FromStreamRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/from-stream/bulk/:
+    post:
+      operationId: api_channels_channels_from_stream_bulk_create
+      description: Asynchronously bulk create channels from stream IDs. Returns a task ID to track progress via WebSocket.
+        This is the recommended approach for large bulk operations.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FromStreamBulkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FromStreamBulkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FromStreamBulkRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/ids/:
+    get:
+      operationId: api_channels_channels_ids_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/match-epg/:
+    post:
+      operationId: api_channels_channels_match_epg_create
+      description: Kick off a Celery task that tries to fuzzy-match channels with EPG data. If channel_ids are provided, only
+        those channels will be processed.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchEpgRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MatchEpgRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MatchEpgRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/set-logos-from-epg/:
+    post:
+      operationId: api_channels_channels_set_logos_from_epg_create
+      description: Trigger a Celery task to set channel logos from EPG data
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/set-names-from-epg/:
+    post:
+      operationId: api_channels_channels_set_names_from_epg_create
+      description: Trigger a Celery task to set channel names from EPG data
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/channels/set-tvg-ids-from-epg/:
+    post:
+      operationId: api_channels_channels_set_tvg_ids_from_epg_create
+      description: Trigger a Celery task to set channel TVG-IDs from EPG data
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Channel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Channel'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+          description: ''
+  /api/channels/dvr/comskip-config/:
+    get:
+      operationId: api_channels_dvr_comskip_config_retrieve
+      description: Upload or inspect the custom comskip.ini used by DVR processing.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_channels_dvr_comskip_config_create
+      description: Upload or inspect the custom comskip.ini used by DVR processing.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/groups/:
+    get:
+      operationId: api_channels_groups_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+    post:
+      operationId: api_channels_groups_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+  /api/channels/groups/{id}/:
+    get:
+      operationId: api_channels_groups_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel group.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+    put:
+      operationId: api_channels_groups_update
+      description: Override update to check M3U associations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel group.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+    patch:
+      operationId: api_channels_groups_partial_update
+      description: Override partial_update to check M3U associations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel group.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelGroup'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+    delete:
+      operationId: api_channels_groups_destroy
+      description: Override destroy to check for associations before deletion
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel group.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/groups/cleanup/:
+    post:
+      operationId: api_channels_groups_cleanup_create
+      description: Delete all channel groups that have no associations (no channels or M3U accounts)
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelGroup'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelGroup'
+          description: ''
+  /api/channels/logos/:
+    get:
+      operationId: api_channels_logos_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogoList'
+          description: ''
+    post:
+      operationId: api_channels_logos_create
+      description: Create a new logo entry
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Logo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+  /api/channels/logos/{id}/:
+    get:
+      operationId: api_channels_logos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+    put:
+      operationId: api_channels_logos_update
+      description: Update an existing logo
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this logo.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Logo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+    patch:
+      operationId: api_channels_logos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this logo.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLogo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLogo'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLogo'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+    delete:
+      operationId: api_channels_logos_destroy
+      description: Delete a logo and remove it from any channels using it
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/logos/{id}/cache/:
+    get:
+      operationId: api_channels_logos_cache_retrieve
+      description: Streams the logo file, whether it's local or remote.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this logo.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+  /api/channels/logos/bulk-delete/:
+    delete:
+      operationId: api_channels_logos_bulk_delete_destroy
+      description: Bulk delete logos by ID
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/logos/cleanup/:
+    post:
+      operationId: api_channels_logos_cleanup_create
+      description: Delete all channel logos that are not used by any channels
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CleanupUnusedLogosRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CleanupUnusedLogosRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CleanupUnusedLogosRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/logos/upload/:
+    post:
+      operationId: api_channels_logos_upload_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Logo'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Logo'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+          description: ''
+  /api/channels/profiles/:
+    get:
+      operationId: api_channels_profiles_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+    post:
+      operationId: api_channels_profiles_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+  /api/channels/profiles/{id}/:
+    get:
+      operationId: api_channels_profiles_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+    put:
+      operationId: api_channels_profiles_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+    patch:
+      operationId: api_channels_profiles_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChannelProfile'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+    delete:
+      operationId: api_channels_profiles_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/profiles/{id}/duplicate/:
+    post:
+      operationId: api_channels_profiles_duplicate_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this channel profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChannelProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelProfile'
+          description: ''
+  /api/channels/profiles/{profile_id}/channels/{channel_id}/:
+    patch:
+      operationId: api_channels_profiles_channels_partial_update
+      description: Enable or disable a channel for a specific group
+      parameters:
+      - in: path
+        name: channel_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: profile_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/profiles/{profile_id}/channels/bulk-update/:
+    patch:
+      operationId: api_channels_profiles_channels_bulk_update_partial_update
+      description: Bulk enable or disable channels for a specific profile. Creates membership records if they don't exist.
+      parameters:
+      - in: path
+        name: profile_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBulkChannelProfileMembership'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBulkChannelProfileMembership'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBulkChannelProfileMembership'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/recordings/:
+    get:
+      operationId: api_channels_recordings_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recording'
+          description: ''
+    post:
+      operationId: api_channels_recordings_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recording'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+  /api/channels/recordings/{id}/:
+    get:
+      operationId: api_channels_recordings_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+    put:
+      operationId: api_channels_recordings_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recording'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+    patch:
+      operationId: api_channels_recordings_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRecording'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRecording'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRecording'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+    delete:
+      operationId: api_channels_recordings_destroy
+      description: 'Delete the Recording and ensure any active DVR client connection is closed.
+
+
+        Also removes the associated file(s) from disk if present.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/recordings/{id}/comskip/:
+    post:
+      operationId: api_channels_recordings_comskip_create
+      description: Trigger comskip processing for this recording.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recording'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recording'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+  /api/channels/recordings/{id}/file/:
+    get:
+      operationId: api_channels_recordings_file_retrieve
+      description: Stream a recorded file with HTTP Range support for seeking.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recording.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: ''
+  /api/channels/recordings/bulk-delete-upcoming/:
+    post:
+      operationId: api_channels_recordings_bulk_delete_upcoming_create
+      description: Delete all upcoming (future) recordings.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/recurring-rules/:
+    get:
+      operationId: api_channels_recurring_rules_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecurringRecordingRule'
+          description: ''
+    post:
+      operationId: api_channels_recurring_rules_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRecordingRule'
+          description: ''
+  /api/channels/recurring-rules/{id}/:
+    get:
+      operationId: api_channels_recurring_rules_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recurring recording rule.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRecordingRule'
+          description: ''
+    put:
+      operationId: api_channels_recurring_rules_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recurring recording rule.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecurringRecordingRule'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRecordingRule'
+          description: ''
+    patch:
+      operationId: api_channels_recurring_rules_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recurring recording rule.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRecurringRecordingRule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRecurringRecordingRule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRecurringRecordingRule'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRecordingRule'
+          description: ''
+    delete:
+      operationId: api_channels_recurring_rules_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recurring recording rule.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/series-rules/:
+    get:
+      operationId: api_channels_series_rules_retrieve
+      description: Retrieve all configured DVR series recording rules.
+      summary: List all series rules
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_channels_series_rules_create
+      description: Add a new series recording rule or update an existing one. Rules will be evaluated immediately to find
+        matching episodes.
+      summary: Create or update a series rule
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeriesRuleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SeriesRuleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SeriesRuleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/series-rules/{tvg_id}/:
+    delete:
+      operationId: api_channels_series_rules_destroy
+      description: Remove a series recording rule by TVG ID. This does not remove already scheduled recordings.
+      summary: Delete a series rule
+      parameters:
+      - in: path
+        name: tvg_id
+        schema:
+          type: string
+        description: Channel TVG ID
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/series-rules/bulk-remove/:
+    post:
+      operationId: api_channels_series_rules_bulk_remove_create
+      description: Delete future scheduled recordings for a series rule. Useful for stopping a rule without losing the configuration.
+        Matches by channel and optionally by series title.
+      summary: Bulk remove scheduled recordings for a series
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkRemoveSeriesRecordingsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulkRemoveSeriesRecordingsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulkRemoveSeriesRecordingsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/series-rules/evaluate/:
+    post:
+      operationId: api_channels_series_rules_evaluate_create
+      description: Trigger evaluation of series recording rules to find and schedule matching episodes. Can evaluate all rules
+        or a specific channel.
+      summary: Evaluate series rules
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateSeriesRulesRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EvaluateSeriesRulesRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EvaluateSeriesRulesRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/channels/streams/:
+    get:
+      operationId: api_channels_streams_list
+      parameters:
+      - in: query
+        name: channel_group_name
+        schema:
+          type: string
+      - in: query
+        name: m3u_account
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: m3u_account_is_active
+        schema:
+          type: boolean
+      - in: query
+        name: m3u_account_name
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: tvg_id
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStreamList'
+          description: ''
+    post:
+      operationId: api_channels_streams_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stream'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Stream'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Stream'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+  /api/channels/streams/{id}/:
+    get:
+      operationId: api_channels_streams_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Stream.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+    put:
+      operationId: api_channels_streams_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Stream.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stream'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Stream'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Stream'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+    patch:
+      operationId: api_channels_streams_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Stream.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStream'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStream'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStream'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+    delete:
+      operationId: api_channels_streams_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Stream.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/streams/bulk-delete/:
+    delete:
+      operationId: api_channels_streams_bulk_delete_destroy
+      description: Bulk delete streams by ID
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/channels/streams/by-ids/:
+    post:
+      operationId: api_channels_streams_by_ids_create
+      description: Retrieve streams by a list of IDs using POST to avoid URL length limitations
+      parameters:
+      - in: query
+        name: channel_group_name
+        schema:
+          type: string
+      - in: query
+        name: m3u_account
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: m3u_account_is_active
+        schema:
+          type: boolean
+      - in: query
+        name: m3u_account_name
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: tvg_id
+        schema:
+          type: string
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamByIdsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StreamByIdsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StreamByIdsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStreamList'
+          description: ''
+  /api/channels/streams/filter-options/:
+    get:
+      operationId: api_channels_streams_filter_options_retrieve
+      description: 'Get available filter options based on current filter state.
+
+        Uses a hierarchical approach: M3U is the parent filter, Group filters based on M3U.'
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+  /api/channels/streams/groups/:
+    get:
+      operationId: api_channels_streams_groups_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+  /api/channels/streams/ids/:
+    get:
+      operationId: api_channels_streams_ids_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: ''
+components:
+  schemas:
+    AssignChannelsRequest:
+      type: object
+      properties:
+        starting_number:
+          type: number
+          format: double
+          description: Starting channel number to assign (can be decimal)
+        channel_ids:
+          type: array
+          items:
+            type: integer
+          description: Channel IDs to assign
+      required:
+      - channel_ids
+    BatchSetEpgRequest:
+      type: object
+      properties:
+        associations:
+          type: array
+          items:
+            $ref: '#/components/schemas/EpgAssociation'
+      required:
+      - associations
+    BulkRemoveSeriesRecordingsRequest:
+      type: object
+      properties:
+        tvg_id:
+          type: string
+          description: Channel TVG ID (required)
+        title:
+          type: string
+          description: Series title - when scope=title, only recordings matching this title are removed
+        scope:
+          allOf:
+          - $ref: '#/components/schemas/ScopeEnum'
+          default: title
+          description: 'title: remove only matching title on channel, channel: remove all future recordings on channel
+
+
+            * `title` - title
+
+            * `channel` - channel'
+      required:
+      - tvg_id
+    ChanneProfilelMembershipUpdate:
+      type: object
+      properties:
+        channel_id:
+          type: integer
+        enabled:
+          type: boolean
+      required:
+      - channel_id
+      - enabled
+    Channel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        channel_number:
+          type: number
+          format: double
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        channel_group_id:
+          type: integer
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        tvc_guide_stationid:
+          type: string
+          nullable: true
+          maxLength: 255
+        epg_data_id:
+          type: integer
+          nullable: true
+        streams:
+          type: array
+          items:
+            type: integer
+        stream_profile_id:
+          type: integer
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        logo_id:
+          type: integer
+          nullable: true
+        user_level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_adult:
+          type: boolean
+          description: Whether this channel contains adult content
+        auto_created:
+          type: boolean
+          description: Whether this channel was automatically created via M3U auto channel sync
+        auto_created_by:
+          type: integer
+          nullable: true
+          description: The M3U account that auto-created this channel
+        auto_created_by_name:
+          type: string
+          readOnly: true
+      required:
+      - auto_created_by_name
+      - id
+      - name
+      - uuid
+    ChannelGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        channel_count:
+          type: string
+          readOnly: true
+        m3u_account_count:
+          type: string
+          readOnly: true
+        m3u_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelGroupM3UAccount'
+          readOnly: true
+      required:
+      - channel_count
+      - id
+      - m3u_account_count
+      - m3u_accounts
+      - name
+    ChannelGroupM3UAccount:
+      type: object
+      properties:
+        m3u_accounts:
+          type: integer
+          readOnly: true
+        channel_group:
+          type: integer
+        enabled:
+          type: boolean
+        auto_channel_sync:
+          type: boolean
+          default: false
+        auto_sync_channel_start:
+          type: number
+          format: double
+          nullable: true
+        custom_properties: {}
+        is_stale:
+          type: boolean
+          description: Whether this group relationship is stale (not seen in recent refresh, pending deletion)
+        last_seen:
+          type: string
+          format: date-time
+          description: Last time this group was seen in the M3U source during a refresh
+      required:
+      - channel_group
+      - enabled
+      - m3u_accounts
+    ChannelProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        channels:
+          type: string
+          readOnly: true
+      required:
+      - channels
+      - id
+      - name
+    CleanupUnusedLogosRequest:
+      type: object
+      properties:
+        delete_files:
+          type: boolean
+          default: false
+          description: Whether to delete local logo files from disk
+    EpgAssociation:
+      type: object
+      properties:
+        channel_id:
+          type: integer
+        epg_data_id:
+          type: integer
+      required:
+      - channel_id
+      - epg_data_id
+    EvaluateSeriesRulesRequest:
+      type: object
+      properties:
+        tvg_id:
+          type: string
+          description: 'Optional: evaluate only rules for this channel TVG ID. If omitted, all rules are evaluated.'
+    FromStreamBulkRequest:
+      type: object
+      properties:
+        stream_ids:
+          type: array
+          items:
+            type: integer
+          description: List of stream IDs to create channels from
+        channel_profile_ids:
+          type: array
+          items:
+            type: integer
+          description: '(Optional) Channel profile ID(s). Behavior: omitted = add to ALL profiles (default); empty array []
+            = add to NO profiles; [0] = add to ALL profiles (explicit); [1,2,...] = add only to specified profiles.'
+        starting_channel_number:
+          type: integer
+          description: '(Optional) Starting channel number mode: null=use provider numbers, 0=lowest available, other=start
+            from specified number'
+      required:
+      - stream_ids
+    FromStreamRequest:
+      type: object
+      properties:
+        stream_id:
+          type: integer
+          description: ID of the stream to link
+        channel_number:
+          type: number
+          format: double
+          description: (Optional) Desired channel number. Must not be in use.
+        name:
+          type: string
+          description: Desired channel name
+        channel_profile_ids:
+          type: array
+          items:
+            type: integer
+          description: '(Optional) Channel profile ID(s). Behavior: omitted = add to ALL profiles (default); empty array []
+            = add to NO profiles; [0] = add to ALL profiles (explicit); [1,2,...] = add only to specified profiles.'
+      required:
+      - stream_id
+    Logo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+        cache_url:
+          type: string
+          readOnly: true
+        channel_count:
+          type: string
+          readOnly: true
+        is_used:
+          type: string
+          readOnly: true
+        channel_names:
+          type: string
+          readOnly: true
+      required:
+      - cache_url
+      - channel_count
+      - channel_names
+      - id
+      - is_used
+      - name
+      - url
+    MatchEpgRequest:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: integer
+          description: List of channel IDs to process. If empty or not provided, all channels without EPG will be processed.
+    ModeEnum:
+      enum:
+      - all
+      - new
+      type: string
+      description: '* `all` - all
+
+        * `new` - new'
+    PaginatedChannelList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+    PaginatedLogoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Logo'
+    PaginatedStreamList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stream'
+    PatchedBulkChannelProfileMembership:
+      type: object
+      properties:
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChanneProfilelMembershipUpdate'
+    PatchedChannel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        channel_number:
+          type: number
+          format: double
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        channel_group_id:
+          type: integer
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        tvc_guide_stationid:
+          type: string
+          nullable: true
+          maxLength: 255
+        epg_data_id:
+          type: integer
+          nullable: true
+        streams:
+          type: array
+          items:
+            type: integer
+        stream_profile_id:
+          type: integer
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        logo_id:
+          type: integer
+          nullable: true
+        user_level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_adult:
+          type: boolean
+          description: Whether this channel contains adult content
+        auto_created:
+          type: boolean
+          description: Whether this channel was automatically created via M3U auto channel sync
+        auto_created_by:
+          type: integer
+          nullable: true
+          description: The M3U account that auto-created this channel
+        auto_created_by_name:
+          type: string
+          readOnly: true
+    PatchedChannelGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        channel_count:
+          type: string
+          readOnly: true
+        m3u_account_count:
+          type: string
+          readOnly: true
+        m3u_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelGroupM3UAccount'
+          readOnly: true
+    PatchedChannelProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        channels:
+          type: string
+          readOnly: true
+    PatchedLogo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+        cache_url:
+          type: string
+          readOnly: true
+        channel_count:
+          type: string
+          readOnly: true
+        is_used:
+          type: string
+          readOnly: true
+        channel_names:
+          type: string
+          readOnly: true
+    PatchedRecording:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        task_id:
+          type: string
+          readOnly: true
+          nullable: true
+        custom_properties:
+          nullable: true
+        channel:
+          type: integer
+    PatchedRecurringRecordingRule:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        days_of_week: {}
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time
+        enabled:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        channel:
+          type: integer
+    PatchedStream:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+          nullable: true
+        m3u_account:
+          type: integer
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        local_file:
+          type: string
+          format: uri
+          nullable: true
+        current_viewers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        last_seen:
+          type: string
+          format: date-time
+        is_stale:
+          type: boolean
+          description: Whether this stream is stale (not seen in recent refresh, pending deletion)
+        is_adult:
+          type: boolean
+          description: Whether this stream contains adult content
+        stream_profile_id:
+          type: integer
+          nullable: true
+        is_custom:
+          type: boolean
+          description: Whether this is a user-created stream or from an M3U account
+        channel_group:
+          type: integer
+          nullable: true
+        stream_hash:
+          type: string
+          nullable: true
+          description: Unique hash for this stream from the M3U account
+          maxLength: 255
+        stream_stats:
+          nullable: true
+          description: JSON object containing stream statistics like video codec, resolution, etc.
+        stream_stats_updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When stream statistics were last updated
+        stream_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Provider stream ID (e.g., XC stream_id) for stable identity across credential changes
+        stream_chno:
+          type: number
+          format: double
+          nullable: true
+          description: Provider channel number (XC num or M3U tvg-chno) for ordering - supports decimals like 2.1
+    Recording:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        task_id:
+          type: string
+          readOnly: true
+          nullable: true
+        custom_properties:
+          nullable: true
+        channel:
+          type: integer
+      required:
+      - channel
+      - end_time
+      - id
+      - start_time
+      - task_id
+    RecurringRecordingRule:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        days_of_week: {}
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time
+        enabled:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        channel:
+          type: integer
+      required:
+      - channel
+      - created_at
+      - end_time
+      - id
+      - start_time
+      - updated_at
+    ReorderChannelRequest:
+      type: object
+      properties:
+        insert_after_id:
+          type: integer
+          nullable: true
+          description: ID of the channel to insert after. Use null to move to the beginning.
+    ScopeEnum:
+      enum:
+      - title
+      - channel
+      type: string
+      description: '* `title` - title
+
+        * `channel` - channel'
+    SeriesRuleRequest:
+      type: object
+      properties:
+        tvg_id:
+          type: string
+          description: Channel TVG ID
+        mode:
+          allOf:
+          - $ref: '#/components/schemas/ModeEnum'
+          default: all
+          description: 'all: record all episodes, new: record only new episodes
+
+
+            * `all` - all
+
+            * `new` - new'
+        title:
+          type: string
+          description: Series title
+      required:
+      - tvg_id
+    SetEpgRequest:
+      type: object
+      properties:
+        epg_data_id:
+          type: integer
+          description: EPG data ID to link
+      required:
+      - epg_data_id
+    Stream:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        url:
+          type: string
+          nullable: true
+        m3u_account:
+          type: integer
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        local_file:
+          type: string
+          format: uri
+          nullable: true
+        current_viewers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        last_seen:
+          type: string
+          format: date-time
+        is_stale:
+          type: boolean
+          description: Whether this stream is stale (not seen in recent refresh, pending deletion)
+        is_adult:
+          type: boolean
+          description: Whether this stream contains adult content
+        stream_profile_id:
+          type: integer
+          nullable: true
+        is_custom:
+          type: boolean
+          description: Whether this is a user-created stream or from an M3U account
+        channel_group:
+          type: integer
+          nullable: true
+        stream_hash:
+          type: string
+          nullable: true
+          description: Unique hash for this stream from the M3U account
+          maxLength: 255
+        stream_stats:
+          nullable: true
+          description: JSON object containing stream statistics like video codec, resolution, etc.
+        stream_stats_updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When stream statistics were last updated
+        stream_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Provider stream ID (e.g., XC stream_id) for stable identity across credential changes
+        stream_chno:
+          type: number
+          format: double
+          nullable: true
+          description: Provider channel number (XC num or M3U tvg-chno) for ordering - supports decimals like 2.1
+      required:
+      - id
+      - updated_at
+    StreamByIdsRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+          description: List of stream IDs to retrieve
+      required:
+      - ids
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

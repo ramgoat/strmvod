@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - Plugins
+  version: 1.0.0
+  description: API documentation for Dispatcharr - Plugins endpoints
+paths:
+  /api/plugins/plugins/:
+    get:
+      operationId: api_plugins_plugins_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/{key}/delete/:
+    delete:
+      operationId: api_plugins_plugins_delete_destroy
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/plugins/plugins/{key}/enabled/:
+    post:
+      operationId: api_plugins_plugins_enabled_create
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/{key}/logo/:
+    get:
+      operationId: api_plugins_plugins_logo_retrieve
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/{key}/run/:
+    post:
+      operationId: api_plugins_plugins_run_create
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/{key}/settings/:
+    post:
+      operationId: api_plugins_plugins_settings_create
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/import/:
+    post:
+      operationId: api_plugins_plugins_import_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/plugins/plugins/reload/:
+    post:
+      operationId: api_plugins_plugins_reload_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

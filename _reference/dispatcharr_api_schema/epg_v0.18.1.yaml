@@ -1,0 +1,687 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - EPG
+  version: 1.0.0
+  description: API documentation for Dispatcharr - EPG endpoints
+paths:
+  /api/epg/current-programs/:
+    post:
+      operationId: api_epg_current_programs_create
+      description: Get currently playing programs for specified channels or all channels
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrentProgramsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CurrentProgramsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CurrentProgramsRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgramData'
+          description: ''
+  /api/epg/epgdata/:
+    get:
+      operationId: api_epg_epgdata_list
+      description: API endpoint that allows EPGData objects to be viewed.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EPGData'
+          description: ''
+  /api/epg/epgdata/{id}/:
+    get:
+      operationId: api_epg_epgdata_retrieve
+      description: API endpoint that allows EPGData objects to be viewed.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this epg data.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGData'
+          description: ''
+  /api/epg/grid/:
+    get:
+      operationId: api_epg_grid_list
+      description: Retrieve programs from the previous hour, currently running and upcoming for the next 24 hours
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgramData'
+          description: ''
+  /api/epg/import/:
+    post:
+      operationId: api_epg_import_create
+      description: Triggers an EPG data import
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/epg/programs/:
+    get:
+      operationId: api_epg_programs_list
+      description: Handles CRUD operations for EPG programs
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgramData'
+          description: ''
+    post:
+      operationId: api_epg_programs_create
+      description: Handles CRUD operations for EPG programs
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramData'
+          description: ''
+  /api/epg/programs/{id}/:
+    get:
+      operationId: api_epg_programs_retrieve
+      description: Handles CRUD operations for EPG programs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this program data.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramData'
+          description: ''
+    put:
+      operationId: api_epg_programs_update
+      description: Handles CRUD operations for EPG programs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this program data.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProgramData'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramData'
+          description: ''
+    patch:
+      operationId: api_epg_programs_partial_update
+      description: Handles CRUD operations for EPG programs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this program data.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProgramData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProgramData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProgramData'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramData'
+          description: ''
+    delete:
+      operationId: api_epg_programs_destroy
+      description: Handles CRUD operations for EPG programs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this program data.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/epg/sources/:
+    get:
+      operationId: api_epg_sources_list
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EPGSource'
+          description: ''
+    post:
+      operationId: api_epg_sources_create
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGSource'
+          description: ''
+  /api/epg/sources/{id}/:
+    get:
+      operationId: api_epg_sources_retrieve
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this epg source.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGSource'
+          description: ''
+    put:
+      operationId: api_epg_sources_update
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this epg source.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGSource'
+          description: ''
+    patch:
+      operationId: api_epg_sources_partial_update
+      description: Handle partial updates with special logic for is_active field
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this epg source.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEPGSource'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEPGSource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEPGSource'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGSource'
+          description: ''
+    delete:
+      operationId: api_epg_sources_destroy
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this epg source.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/epg/sources/upload/:
+    post:
+      operationId: api_epg_sources_upload_create
+      description: API endpoint that allows EPG sources to be viewed or edited.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EPGSource'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EPGSource'
+          description: ''
+components:
+  schemas:
+    CurrentProgramsRequest:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Array of channel IDs. If null or omitted, returns all channels with current programs.
+    EPGData:
+      type: object
+      description: 'Only returns the tvg_id and the ''name'' field from EPGData.
+
+        We assume ''name'' is effectively the channel name.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        icon_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 500
+        epg_source:
+          type: integer
+          nullable: true
+      required:
+      - id
+      - name
+    EPGSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        source_type:
+          $ref: '#/components/schemas/SourceTypeEnum'
+        url:
+          type: string
+          nullable: true
+        api_key:
+          type: string
+          nullable: true
+          maxLength: 255
+        is_active:
+          type: boolean
+        file_path:
+          type: string
+          nullable: true
+          maxLength: 1024
+        refresh_interval:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Priority for EPG matching (higher numbers = higher priority). Used when multiple EPG sources have matching
+            entries for a channel.
+        status:
+          $ref: '#/components/schemas/EPGSourceStatusEnum'
+        last_message:
+          type: string
+          nullable: true
+          description: Last status message, including success results or error information
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Time when this source was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Time when this source was last successfully refreshed
+        custom_properties:
+          nullable: true
+          description: Custom properties for dummy EPG configuration (regex patterns, timezone, duration, etc.)
+        epg_data_count:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - epg_data_count
+      - id
+      - name
+      - source_type
+    EPGSourceStatusEnum:
+      enum:
+      - idle
+      - fetching
+      - parsing
+      - error
+      - success
+      - disabled
+      type: string
+      description: '* `idle` - Idle
+
+        * `fetching` - Fetching
+
+        * `parsing` - Parsing
+
+        * `error` - Error
+
+        * `success` - Success
+
+        * `disabled` - Disabled'
+    PatchedEPGSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        source_type:
+          $ref: '#/components/schemas/SourceTypeEnum'
+        url:
+          type: string
+          nullable: true
+        api_key:
+          type: string
+          nullable: true
+          maxLength: 255
+        is_active:
+          type: boolean
+        file_path:
+          type: string
+          nullable: true
+          maxLength: 1024
+        refresh_interval:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Priority for EPG matching (higher numbers = higher priority). Used when multiple EPG sources have matching
+            entries for a channel.
+        status:
+          $ref: '#/components/schemas/EPGSourceStatusEnum'
+        last_message:
+          type: string
+          nullable: true
+          description: Last status message, including success results or error information
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Time when this source was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Time when this source was last successfully refreshed
+        custom_properties:
+          nullable: true
+          description: Custom properties for dummy EPG configuration (regex patterns, timezone, duration, etc.)
+        epg_data_count:
+          type: string
+          readOnly: true
+    PatchedProgramData:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        title:
+          type: string
+          maxLength: 255
+        sub_title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+    ProgramData:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        title:
+          type: string
+          maxLength: 255
+        sub_title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        tvg_id:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+      - end_time
+      - id
+      - start_time
+      - title
+    SourceTypeEnum:
+      enum:
+      - xmltv
+      - schedules_direct
+      - dummy
+      type: string
+      description: '* `xmltv` - XMLTV URL
+
+        * `schedules_direct` - Schedules Direct API
+
+        * `dummy` - Custom Dummy EPG'
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,2 +1,3 @@
 docker/.data
 /plugin/__pycache__
+/docker/.vod

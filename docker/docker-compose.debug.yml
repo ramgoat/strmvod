@@ -4,7 +4,7 @@ services:
     #   context: ..
     #   dockerfile: docker/Dockerfile.dev
     image: ghcr.io/dispatcharr/dispatcharr:${IMAGE_TAG}
-    container_name: dispatcharr_debug
+    container_name: dispatcharr
     ports:
       - 5656:5656 # API port
       - 9193:9191 # Web UI port
@@ -13,6 +13,7 @@ services:
     volumes:
       - ../plugin:/data/plugins/strmvod
       - ${DATA_DIR}/:/data
+      - ./.vod:/vod
     environment:
       # - DISPATCHARR_ENV=dev
       - DISPATCHARR_DEBUG=true

@@ -1,1 +1,2 @@
 docker/.data
+!docker/.data/vod_strm_settings.json

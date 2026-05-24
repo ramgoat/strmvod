@@ -1,0 +1,1259 @@
+openapi: 3.0.3
+info:
+  title: Dispatcharr API - M3U
+  version: 1.0.0
+  description: API documentation for Dispatcharr - M3U endpoints
+paths:
+  /api/m3u/accounts/:
+    get:
+      operationId: api_m3u_accounts_list
+      description: Handles CRUD operations for M3U accounts
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/M3UAccount'
+          description: ''
+    post:
+      operationId: api_m3u_accounts_create
+      description: Handles CRUD operations for M3U accounts
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+  /api/m3u/accounts/{id}/:
+    get:
+      operationId: api_m3u_accounts_retrieve
+      description: Handles CRUD operations for M3U accounts
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+    put:
+      operationId: api_m3u_accounts_update
+      description: Handles CRUD operations for M3U accounts
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+    patch:
+      operationId: api_m3u_accounts_partial_update
+      description: Handle partial updates with special logic for is_active field
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+    delete:
+      operationId: api_m3u_accounts_destroy
+      description: Handles CRUD operations for M3U accounts
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/m3u/accounts/{id}/group-settings/:
+    patch:
+      operationId: api_m3u_accounts_group_settings_partial_update
+      description: Update auto channel sync settings for M3U account groups
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccount'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+  /api/m3u/accounts/{id}/refresh-vod/:
+    post:
+      operationId: api_m3u_accounts_refresh_vod_create
+      description: Trigger VOD content refresh for XtreamCodes accounts
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UAccount'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccount'
+          description: ''
+  /api/m3u/accounts\/{account_id}\/filters/:
+    get:
+      operationId: api_m3u_accounts\_\_filters_list
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/M3UFilter'
+          description: ''
+    post:
+      operationId: api_m3u_accounts\_\_filters_create
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UFilter'
+          description: ''
+  /api/m3u/accounts\/{account_id}\/filters/{id}/:
+    get:
+      operationId: api_m3u_accounts\_\_filters_retrieve
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u filter.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UFilter'
+          description: ''
+    put:
+      operationId: api_m3u_accounts\_\_filters_update
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u filter.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UFilter'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UFilter'
+          description: ''
+    patch:
+      operationId: api_m3u_accounts\_\_filters_partial_update
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u filter.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UFilter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UFilter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UFilter'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UFilter'
+          description: ''
+    delete:
+      operationId: api_m3u_accounts\_\_filters_destroy
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u filter.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/m3u/accounts\/{account_id}\/profiles/:
+    get:
+      operationId: api_m3u_accounts\_\_profiles_list
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/M3UAccountProfile'
+          description: ''
+    post:
+      operationId: api_m3u_accounts\_\_profiles_create
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccountProfile'
+          description: ''
+  /api/m3u/accounts\/{account_id}\/profiles/{id}/:
+    get:
+      operationId: api_m3u_accounts\_\_profiles_retrieve
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccountProfile'
+          description: ''
+    put:
+      operationId: api_m3u_accounts\_\_profiles_update
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/M3UAccountProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccountProfile'
+          description: ''
+    patch:
+      operationId: api_m3u_accounts\_\_profiles_partial_update
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccountProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccountProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedM3UAccountProfile'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/M3UAccountProfile'
+          description: ''
+    delete:
+      operationId: api_m3u_accounts\_\_profiles_destroy
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this m3u account profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/m3u/refresh/:
+    post:
+      operationId: api_m3u_refresh_create
+      description: Triggers a refresh of all active M3U accounts
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/m3u/refresh-account-info/{profile_id}/:
+    post:
+      operationId: api_m3u_refresh_account_info_create
+      description: Triggers a refresh of account information for a specific M3U profile
+      parameters:
+      - in: path
+        name: profile_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/m3u/refresh/{account_id}/:
+    post:
+      operationId: api_m3u_refresh_create_2
+      description: Triggers a refresh of a single M3U account
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/m3u/server-groups/:
+    get:
+      operationId: api_m3u_server_groups_list
+      description: Handles CRUD operations for Server Groups
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServerGroup'
+          description: ''
+    post:
+      operationId: api_m3u_server_groups_create
+      description: Handles CRUD operations for Server Groups
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerGroup'
+          description: ''
+  /api/m3u/server-groups/{id}/:
+    get:
+      operationId: api_m3u_server_groups_retrieve
+      description: Handles CRUD operations for Server Groups
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this server group.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerGroup'
+          description: ''
+    put:
+      operationId: api_m3u_server_groups_update
+      description: Handles CRUD operations for Server Groups
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this server group.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServerGroup'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerGroup'
+          description: ''
+    patch:
+      operationId: api_m3u_server_groups_partial_update
+      description: Handles CRUD operations for Server Groups
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this server group.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServerGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServerGroup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServerGroup'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerGroup'
+          description: ''
+    delete:
+      operationId: api_m3u_server_groups_destroy
+      description: Handles CRUD operations for Server Groups
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this server group.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AccountTypeEnum:
+      enum:
+      - STD
+      - XC
+      type: string
+      description: '* `STD` - Standard
+
+        * `XC` - Xtream Codes'
+    ChannelGroupM3UAccount:
+      type: object
+      properties:
+        m3u_accounts:
+          type: integer
+          readOnly: true
+        channel_group:
+          type: integer
+        enabled:
+          type: boolean
+        auto_channel_sync:
+          type: boolean
+          default: false
+        auto_sync_channel_start:
+          type: number
+          format: double
+          nullable: true
+        custom_properties: {}
+        is_stale:
+          type: boolean
+          description: Whether this group relationship is stale (not seen in recent refresh, pending deletion)
+        last_seen:
+          type: string
+          format: date-time
+          description: Last time this group was seen in the M3U source during a refresh
+      required:
+      - channel_group
+      - enabled
+      - m3u_accounts
+    FilterTypeEnum:
+      enum:
+      - group
+      - name
+      - url
+      type: string
+      description: '* `group` - Group
+
+        * `name` - Stream Name
+
+        * `url` - Stream URL'
+    M3UAccount:
+      type: object
+      description: Serializer for M3U Account
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Unique name for this M3U account
+          maxLength: 255
+        server_url:
+          type: string
+          nullable: true
+        file_path:
+          type: string
+          nullable: true
+          maxLength: 255
+        server_group:
+          type: integer
+          nullable: true
+          description: The server group this M3U account belongs to
+        max_streams:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Maximum number of concurrent streams (0 for unlimited)
+        is_active:
+          type: boolean
+          description: Set to false to deactivate this M3U account
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Time when this account was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Time when this account was last successfully refreshed
+        filters:
+          type: string
+          readOnly: true
+        user_agent:
+          type: integer
+          nullable: true
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/M3UAccountProfile'
+          readOnly: true
+        locked:
+          type: boolean
+          description: Protected - can't be deleted or modified
+        channel_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelGroupM3UAccount'
+        refresh_interval:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        custom_properties:
+          nullable: true
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        username:
+          type: string
+          nullable: true
+          maxLength: 255
+        password:
+          type: string
+          nullable: true
+          maxLength: 255
+        stale_stream_days:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Number of days after which a stream will be removed if not seen in the M3U source.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Priority for VOD provider selection (higher numbers = higher priority). Used when multiple providers
+            offer the same content.
+        status:
+          $ref: '#/components/schemas/M3UAccountStatusEnum'
+        last_message:
+          type: string
+          nullable: true
+          description: Last status message, including success results or error information
+        enable_vod:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_live:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_vod:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_series:
+          type: boolean
+          writeOnly: true
+      required:
+      - created_at
+      - filters
+      - id
+      - name
+      - profiles
+    M3UAccountProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name for the M3U account profile
+          maxLength: 255
+        max_streams:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Maximum number of concurrent streams (0 for unlimited)
+        is_active:
+          type: boolean
+          description: Set to false to deactivate this profile
+        is_default:
+          type: boolean
+          description: Set to false to deactivate this profile
+        current_viewers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        search_pattern:
+          type: string
+          maxLength: 255
+        replace_pattern:
+          type: string
+          maxLength: 255
+        custom_properties:
+          nullable: true
+          description: Custom properties for storing account information from provider (e.g., XC account details, expiration
+            dates)
+        account:
+          type: string
+          readOnly: true
+      required:
+      - account
+      - id
+      - name
+    M3UAccountStatusEnum:
+      enum:
+      - idle
+      - fetching
+      - parsing
+      - error
+      - success
+      - pending_setup
+      - disabled
+      type: string
+      description: '* `idle` - Idle
+
+        * `fetching` - Fetching
+
+        * `parsing` - Parsing
+
+        * `error` - Error
+
+        * `success` - Success
+
+        * `pending_setup` - Pending Setup
+
+        * `disabled` - Disabled'
+    M3UFilter:
+      type: object
+      description: Serializer for M3U Filters
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        filter_type:
+          allOf:
+          - $ref: '#/components/schemas/FilterTypeEnum'
+          description: 'Filter based on either group title or stream name.
+
+
+            * `group` - Group
+
+            * `name` - Stream Name
+
+            * `url` - Stream URL'
+        regex_pattern:
+          type: string
+          description: A regex pattern to match streams or groups.
+          maxLength: 200
+        exclude:
+          type: boolean
+          description: If True, matching items are excluded; if False, only matches are included.
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        custom_properties:
+          nullable: true
+      required:
+      - id
+      - regex_pattern
+    PatchedM3UAccount:
+      type: object
+      description: Serializer for M3U Account
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Unique name for this M3U account
+          maxLength: 255
+        server_url:
+          type: string
+          nullable: true
+        file_path:
+          type: string
+          nullable: true
+          maxLength: 255
+        server_group:
+          type: integer
+          nullable: true
+          description: The server group this M3U account belongs to
+        max_streams:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Maximum number of concurrent streams (0 for unlimited)
+        is_active:
+          type: boolean
+          description: Set to false to deactivate this M3U account
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Time when this account was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Time when this account was last successfully refreshed
+        filters:
+          type: string
+          readOnly: true
+        user_agent:
+          type: integer
+          nullable: true
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/M3UAccountProfile'
+          readOnly: true
+        locked:
+          type: boolean
+          description: Protected - can't be deleted or modified
+        channel_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelGroupM3UAccount'
+        refresh_interval:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        custom_properties:
+          nullable: true
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        username:
+          type: string
+          nullable: true
+          maxLength: 255
+        password:
+          type: string
+          nullable: true
+          maxLength: 255
+        stale_stream_days:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Number of days after which a stream will be removed if not seen in the M3U source.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Priority for VOD provider selection (higher numbers = higher priority). Used when multiple providers
+            offer the same content.
+        status:
+          $ref: '#/components/schemas/M3UAccountStatusEnum'
+        last_message:
+          type: string
+          nullable: true
+          description: Last status message, including success results or error information
+        enable_vod:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_live:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_vod:
+          type: boolean
+          writeOnly: true
+        auto_enable_new_groups_series:
+          type: boolean
+          writeOnly: true
+    PatchedM3UAccountProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name for the M3U account profile
+          maxLength: 255
+        max_streams:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Maximum number of concurrent streams (0 for unlimited)
+        is_active:
+          type: boolean
+          description: Set to false to deactivate this profile
+        is_default:
+          type: boolean
+          description: Set to false to deactivate this profile
+        current_viewers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        search_pattern:
+          type: string
+          maxLength: 255
+        replace_pattern:
+          type: string
+          maxLength: 255
+        custom_properties:
+          nullable: true
+          description: Custom properties for storing account information from provider (e.g., XC account details, expiration
+            dates)
+        account:
+          type: string
+          readOnly: true
+    PatchedM3UFilter:
+      type: object
+      description: Serializer for M3U Filters
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        filter_type:
+          allOf:
+          - $ref: '#/components/schemas/FilterTypeEnum'
+          description: 'Filter based on either group title or stream name.
+
+
+            * `group` - Group
+
+            * `name` - Stream Name
+
+            * `url` - Stream URL'
+        regex_pattern:
+          type: string
+          description: A regex pattern to match streams or groups.
+          maxLength: 200
+        exclude:
+          type: boolean
+          description: If True, matching items are excluded; if False, only matches are included.
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        custom_properties:
+          nullable: true
+    PatchedServerGroup:
+      type: object
+      description: Serializer for Server Group
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Unique name for this server group.
+          maxLength: 100
+    ServerGroup:
+      type: object
+      description: Serializer for Server Group
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Unique name for this server group.
+          maxLength: 100
+      required:
+      - id
+      - name
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

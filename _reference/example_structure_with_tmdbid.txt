@@ -1,0 +1,20 @@
+.
+├── movies
+    ├── MyMovie (2023) [tmdbid=######]
+    │   ├── MyMovie (2023).nfo
+	│   ├── MyMovie (2023).strm
+└── series
+    ├── #NoFilter (2023) [tmdbid=######]
+    │   ├── Season 01
+    │   │   ├── #NoFilter (2023) - S01E01.nfo
+    │   │   ├── #NoFilter (2023) - S01E01.strm
+    │   └── tvshow.nfo
+    ├── 1899 (2022) [tmdbid=######]
+    │   ├── Season 01
+    │   │   ├── 1899 (2022) - S01E01.nfo
+    │   │   ├── 1899 (2022) - S01E01.strm
+    │   └── tvshow.nfo
+    ├── 3 Body Problem (2024) [tmdbid=######]
+    │   ├── Season 01
+    │   │   ├── 3 Body Problem (2024) - S01E01.nfo
+    │   │   ├── 3 Body Problem (2024) - S01E01.strm

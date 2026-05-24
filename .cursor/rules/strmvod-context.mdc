@@ -5,11 +5,13 @@ alwaysApply: true
 
 # strmvod / Dispatcharr Workspace Context
 
-- This workspace contains the `strmvod` plugin (`strmvod_cmc0619`) for Dispatcharr.
-- The `dispatcharr_strmvod` directory is **manually populated by the user** and represents a snapshot of Dispatcharr's `/config` and `/vod` directories.
-- The manual copy exists because the actual mapped network drives (where `/config` and `/vod` live) are **not directly accessible** from the Windows machine where Cursor is running.
-- When reasoning about files under `dispatcharr_strmvod`, treat them as a mirror of the corresponding paths under Dispatcharr's `/config` and `/vod` directories, but remember they may be slightly out of date and are **read-only from Cursor's perspective**.
+- This workspace contains the `strmvod` plugin (`strmvod_ramgoat`) for Dispatcharr.
 - The `Dispatcharr` directory contains the source code for the Dispatcharr application and should be used to when developing the plugin to ensure compatibility and a functional plugin.
+- A development instance of Dispatcharr is running locally through Docker Desktop (WSL) that uses a Production image with additional environment variables for debugging and more verbose logging.  The instance is deployed using the `docker-compose.debug.yml` file located in the `/strmvod_ramgoat/docker` directory.
+
+# IMPORTANT
+
+DO NOT modify the Dispatcharr source code.  We must work around the constraints of the production build being used in the Docker Compose project.  Troubleshooting is limited to modifying the Docker compose project file and the plugin file.
 
 # Project Goal and Constraints
 

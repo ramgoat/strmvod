@@ -891,6 +891,12 @@ class Plugin:
             series_dir = os.path.join(root, series_dir_name)
 
             try:
+                self._api_request(f"/api/vod/series/{series_id}/provider-info/", token, relogin_callback)
+            except Exception as e:
+                if verbose:
+                    logger.warning("[SERIES %s] provider-info fetch failed: %s", series_id, e)
+
+            try:
                 episodes_data = self._api_request(f"/api/vod/series/{series_id}/episodes/", token, relogin_callback)
             except Exception as e:
                 errors += 1

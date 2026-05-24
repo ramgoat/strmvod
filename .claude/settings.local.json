@@ -7,6 +7,9 @@
       "Read(//tmp/**)",
       "Bash(curl -s -X POST http://localhost:9193/api/plugins/plugins/strmvod/run/ -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Content-Type: application/json' -d '{\"action\": \"write_movies\", \"params\": {\"dry_run\": true, \"debug_log\": true}}')",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d, indent=2\\)\\)\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\micro\\Downloads\\strmvod_0.4.0"
     ]
   }
 }

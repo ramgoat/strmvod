@@ -6,6 +6,7 @@ import threading
 from datetime import datetime
 from typing import Dict, Any, List, Tuple, Set, Optional
 import requests
+import shutil
 
 
 # Global scheduler state

@@ -4,7 +4,7 @@ import re
 import time
 import threading
 from datetime import datetime
-from typing import Dict, Any, List, Tuple, Callable, Set, Optional
+from typing import Dict, Any, List, Tuple, Set, Optional
 import requests
 
 
@@ -19,7 +19,6 @@ _debug_lock = threading.Lock()
 
 # Constants
 DEFAULT_TIMEOUT = 20
-API_TIMEOUT = 30
 SAFE_NAME_RE = re.compile(r'[\\/:*?"<>|\t\r\n\']+')
 DEFAULT_MAX_NAME_LENGTH = 180
 TMDB_RATE_LIMIT_DELAY = 0.26
@@ -126,8 +125,6 @@ class Plugin:
 
     fields = [
         {"id": "dispatcharr_host", "label": "Dispatcharr Host (host:port)", "type": "string", "default": "tv.local:9191", "help_text": "NO scheme. Example: tv.local:9191"},
-        {"id": "api_username", "label": "API Username", "type": "string", "default": "tv"},
-        {"id": "api_password", "label": "API Password", "type": "string", "default": "tv"},
         {"id": "tmdb_api_key", "label": "TMDB API Key (optional)", "type": "string", "default": "", "help_text": "Get free API key from themoviedb.org. If empty, uses original names."},
         {"id": "write_nfo_files", "label": "Write NFO Files", "type": "boolean", "default": False, "help_text": "Write .nfo metadata files for Jellyfin/Emby/Plex. Requires TMDB API key."},
         {"id": "movies_root", "label": "Movies Root", "type": "string", "default": "/VODs/movies"},
@@ -147,7 +144,6 @@ class Plugin:
     ]
 
     def __init__(self):
-        self.api_base = "http://127.0.0.1:9191"
         self.last_tmdb_request = 0
         self.settings_file = "/data/vod_strm_settings.json"
         self.debug_log_file = "/data/vod_strm_debug.log"
@@ -261,19 +257,7 @@ class Plugin:
                             try:
                                 scheduled_settings = settings.copy()
                                 scheduled_settings["dry_run"] = False
-
-                                token_container = {"token": self._login(
-                                    settings.get("api_username", "tv"),
-                                    settings.get("api_password", "tv")
-                                )}
-                                def relogin():
-                                    token_container["token"] = self._login(
-                                        settings.get("api_username", "tv"),
-                                        settings.get("api_password", "tv")
-                                    )
-                                    return token_container["token"]
-
-                                result = self._write_movies(scheduled_settings, logger, token_container["token"], relogin)
+                                result = self._write_movies(scheduled_settings, logger)
                                 logger.info(f"Scheduled movie scan completed: {result.get('message', 'Done')}")
                             except Exception as e:
                                 logger.error(f"Error in scheduled movie scan: {e}")
@@ -291,19 +275,7 @@ class Plugin:
                             try:
                                 scheduled_settings = settings.copy()
                                 scheduled_settings["dry_run"] = False
-
-                                token_container = {"token": self._login(
-                                    settings.get("api_username", "tv"),
-                                    settings.get("api_password", "tv")
-                                )}
-                                def relogin():
-                                    token_container["token"] = self._login(
-                                        settings.get("api_username", "tv"),
-                                        settings.get("api_password", "tv")
-                                    )
-                                    return token_container["token"]
-
-                                result = self._write_series(scheduled_settings, logger, token_container["token"], relogin)
+                                result = self._write_series(scheduled_settings, logger)
                                 logger.info(f"Scheduled series scan completed: {result.get('message', 'Done')}")
                             except Exception as e:
                                 logger.error(f"Error in scheduled series scan: {e}")
@@ -565,48 +537,41 @@ class Plugin:
                 logger.info("[SERIES %s] Using original name (TMDB lookup failed): '%s'", series_id, original_name)
         return original_name, original_year, None
 
-    def _login(self, username: str, password: str) -> str:
-        """Authenticate and return access token."""
-        url = f"{self.api_base}/api/accounts/token/"
-        response = requests.post(url, json={"username": username, "password": password}, timeout=DEFAULT_TIMEOUT)
-        response.raise_for_status()
-        return response.json().get("access", "")
+    def _fetch_movies(self, dry_run: bool = False) -> List[Dict[str, Any]]:
+        """Fetch movies from the database via ORM."""
+        from apps.vod.models import Movie
+        qs = Movie.objects.filter(
+            m3u_relations__m3u_account__is_active=True
+        ).distinct().only('id', 'uuid', 'name', 'year', 'tmdb_id')
+        if dry_run:
+            qs = qs[:DRY_RUN_LIMIT]
+        return [
+            {"id": m.id, "uuid": str(m.uuid), "name": m.name, "year": m.year, "tmdb_id": m.tmdb_id}
+            for m in qs
+        ]
 
-    def _get_headers(self, token: str) -> Dict[str, str]:
-        """Build authorization headers."""
-        return {"Authorization": f"Bearer {token}"} if token else {}
+    def _fetch_series(self, dry_run: bool = False) -> List[Dict[str, Any]]:
+        """Fetch series from the database via ORM."""
+        from apps.vod.models import Series
+        qs = Series.objects.filter(
+            m3u_relations__m3u_account__is_active=True
+        ).distinct().only('id', 'uuid', 'name', 'year', 'tmdb_id')
+        if dry_run:
+            qs = qs[:DRY_RUN_LIMIT]
+        return [
+            {"id": s.id, "uuid": str(s.uuid), "name": s.name, "year": s.year, "tmdb_id": s.tmdb_id}
+            for s in qs
+        ]
 
-    def _api_request(self, url_or_path: str, token: str, relogin_callback: Callable) -> Dict[str, Any]:
-        """Make authenticated API request with auto-relogin on 401."""
-        url = url_or_path if url_or_path.startswith("http") else f"{self.api_base.rstrip('/')}{url_or_path}"
-        response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
-        if response.status_code == 401 and relogin_callback:
-            token = relogin_callback()
-            response = requests.get(url, headers=self._get_headers(token), timeout=API_TIMEOUT)
-        response.raise_for_status()
-        return response.json() if response.content else {}
-
-    def _paginate(self, first_path: str, token: str, relogin_callback: Callable, logger: Any, dry_run: bool = False) -> List[Dict[str, Any]]:
-        """Follow pagination until exhausted or dry_run limit is hit."""
-        results = []
-        url_or_path = first_path
-        page_num = 1
-        while url_or_path:
-            if dry_run and len(results) >= DRY_RUN_LIMIT:
-                logger.info("Dry run limit of %d reached. Stopping pagination.", DRY_RUN_LIMIT)
-                break
-            page = self._api_request(url_or_path, token, relogin_callback)
-            page_results = page.get("results", [])
-            results.extend(page_results)
-            url_or_path = page.get("next")
-            if url_or_path:
-                logger.info("Fetched page %d (%d items, %d total)", page_num, len(page_results), len(results))
-            else:
-                logger.info("Fetched page %d (%d items, %d total) - Complete!", page_num, len(page_results), len(results))
-            page_num += 1
-        if dry_run and len(results) > DRY_RUN_LIMIT:
-            return results[:DRY_RUN_LIMIT]
-        return results
+    def _fetch_episodes(self, series_id: int) -> List[Dict[str, Any]]:
+        """Fetch episodes for a series from the database via ORM."""
+        from apps.vod.models import Episode
+        qs = Episode.objects.filter(series_id=series_id).order_by('season_number', 'episode_number')
+        return [
+            {"id": e.id, "uuid": str(e.uuid), "name": e.name,
+             "season_number": e.season_number, "episode_number": e.episode_number}
+            for e in qs
+        ]
 
     def _probe_url(self, url: str) -> bool:
         """Check if URL is accessible via HEAD request."""
@@ -710,10 +675,9 @@ class Plugin:
     
         return removed_count, notes
     
-    def _write_movies(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
+    def _write_movies(self, settings: Dict[str, Any], logger: Any) -> Dict[str, Any]:
         """Write .strm files for movies."""
         root = settings.get("movies_root", "/VODs/movies")
-        page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))
         probe = bool(settings.get("probe_urls", False))
@@ -724,10 +688,10 @@ class Plugin:
         debug_log = bool(settings.get("debug_log", False))
 
         self._setup_debug_logger(debug_log)
-        
+
         # Wrap logger to write to both django logs and debug file
         logger = DualLogger(logger, self.debug_logger)
-        
+
         logger.info("=== STARTING MOVIE PROCESSING ===")
         logger.info("Root: %s, Dry Run: %s, TMDB: %s", root, dry_run, 'enabled' if tmdb_api_key else 'disabled')
 
@@ -740,12 +704,10 @@ class Plugin:
             logger.info("TMDB lookups disabled for dry run")
 
         ensure_dir(root)
-        endpoint = f"/api/vod/movies/?page_size={page_size}"
-        logger.info("Fetching movies from API...")
-        logger.info("Fetching from API endpoint: %s", endpoint)
+        logger.info("Fetching movies from database...")
 
-        rows = self._paginate(endpoint, token, relogin_callback, logger, dry_run=dry_run)
-        logger.info("Fetched %d movies from API", len(rows))
+        rows = self._fetch_movies(dry_run=dry_run)
+        logger.info("Fetched %d movies from database", len(rows))
         logger.info("Total movies fetched: %d", len(rows))
 
         manifest = load_manifest(root)
@@ -828,10 +790,9 @@ class Plugin:
 
         return {"status": "ok", "scope": "movies", "created": created, "updated": updated, "skipped": skipped, "errors": errors, "removed": removed, "dry_run": dry_run, "count_input": len(rows), "skip_reasons": reasons}
 
-    def _write_series(self, settings: Dict[str, Any], logger: Any, token: str, relogin_callback: Callable) -> Dict[str, Any]:
+    def _write_series(self, settings: Dict[str, Any], logger: Any) -> Dict[str, Any]:
         """Write .strm files for series episodes."""
         root = settings.get("series_root", "/VODs/series")
-        page_size = 100
         dry_run = bool(settings.get("dry_run", False))
         verbose = bool(settings.get("verbose", True))
         probe = bool(settings.get("probe_urls", False))
@@ -842,10 +803,10 @@ class Plugin:
         debug_log = bool(settings.get("debug_log", False))
 
         self._setup_debug_logger(debug_log)
-        
+
         # Wrap logger to write to both django logs and debug file
         logger = DualLogger(logger, self.debug_logger)
-        
+
         logger.info("=== STARTING SERIES PROCESSING ===")
         logger.info("Root: %s, Dry Run: %s, TMDB: %s", root, dry_run, 'enabled' if tmdb_api_key else 'disabled')
 
@@ -858,12 +819,10 @@ class Plugin:
             logger.info("TMDB lookups disabled for dry run")
 
         ensure_dir(root)
-        endpoint = f"/api/vod/series/?page_size={page_size}"
-        logger.info("Fetching series from API...")
-        logger.info("Fetching from API endpoint: %s", endpoint)
+        logger.info("Fetching series from database...")
 
-        series_rows = self._paginate(endpoint, token, relogin_callback, logger, dry_run=dry_run)
-        logger.info("Fetched %d series from API", len(series_rows))
+        series_rows = self._fetch_series(dry_run=dry_run)
+        logger.info("Fetched %d series from database", len(series_rows))
         logger.info("Total series fetched: %d", len(series_rows))
 
         manifest = load_manifest(root)
@@ -891,13 +850,7 @@ class Plugin:
             series_dir = os.path.join(root, series_dir_name)
 
             try:
-                self._api_request(f"/api/vod/series/{series_id}/provider-info/", token, relogin_callback)
-            except Exception as e:
-                if verbose:
-                    logger.warning("[SERIES %s] provider-info fetch failed: %s", series_id, e)
-
-            try:
-                episodes_data = self._api_request(f"/api/vod/series/{series_id}/episodes/", token, relogin_callback)
+                episodes_data = self._fetch_episodes(series_id)
             except Exception as e:
                 errors += 1
                 if verbose:
@@ -1014,29 +967,13 @@ class Plugin:
         self._save_settings(settings)
         self._start_background_scheduler(settings)
 
-        api_user = settings.get("api_username", "tv")
-        api_pass = settings.get("api_password", "tv")
-
         try:
-            logger.info("Authenticating with API...")
-            token_container = {"token": self._login(api_user, api_pass)}
-            logger.info("Authentication successful")
-
-            def relogin():
-                logger.warning("API token expired or invalid, attempting to re-authenticate...")
-                token_container["token"] = self._login(api_user, api_pass)
-                logger.info("Re-authentication successful")
-                return token_container["token"]
-
             if action == "write_movies":
-                return self._write_movies(settings, logger, token_container["token"], relogin)
+                return self._write_movies(settings, logger)
             if action == "write_series":
-                return self._write_series(settings, logger, token_container["token"], relogin)
+                return self._write_series(settings, logger)
             return {"status": "error", "message": f"Unknown action: {action}"}
 
-        except requests.exceptions.HTTPError as e:
-            logger.exception("HTTP Error during plugin execution: %s", e.response.text)
-            return {"status": "error", "message": f"API Request Failed: {e}"}
         except Exception as e:
             logger.exception("An unexpected error occurred during plugin execution.")
             return {"status": "error", "message": f"An unexpected error occurred: {e}"}

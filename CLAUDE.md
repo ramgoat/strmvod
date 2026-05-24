@@ -117,10 +117,46 @@ The original "all 532 skipped" result was most likely due to the test data havin
 
 1. Edit `plugin/plugin.py`
 2. Run `./reload-plugin.sh` to hot-reload (no container restart needed)
-3. In the Dispatcharr UI at `http://localhost:9193`, navigate to Plugins → strmvod
-4. Run "Write Series .STRM Files" with `dry_run=true` and `debug_log=true`
-5. Check `/data/vod_strm_debug.log` inside the container (or `docker/.data/vod_strm_debug.log` on the host) for output
-6. Verify `.strm` files appear under `docker/.vod/series/`
+3. Save settings and run the plugin via the API (see below)
+4. Check `/data/vod_strm_debug.log` inside the container (or `docker/.data/vod_strm_debug.log` on the host) for output
+5. Verify `.strm` files appear under `docker/.vod/series/`
+
+### Running the plugin via API
+
+**Always use the `/api/plugins/plugins/strmvod/run/` endpoint** — never invoke via custom settings dicts in code. The web UI performs two sequential calls; replicate that pattern in curl:
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:9193/api/accounts/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"strmvod","password":"TESLA!bye0tenner"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access'])")
+
+# Step 1 — save settings (mirrors what the UI does before running)
+curl -s -X POST http://localhost:9193/api/plugins/plugins/strmvod/settings/ \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "settings": {
+      "debug_log": true,
+      "dry_run": true,
+      "movies_root": "/vod/movies",
+      "series_root": "/vod/series",
+      "api_username": "strmvod",
+      "api_password": "TESLA!bye0tenner",
+      "dispatcharr_host": "localhost:9193",
+      "write_nfo_files": true,
+      "cleanup_removed": false
+    }
+  }'
+
+# Step 2 — run the action (params is always empty {}; settings come from Step 1)
+curl -s -X POST http://localhost:9193/api/plugins/plugins/strmvod/run/ \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"action":"write_series","params":{}}'
+```
+
+Replace `"write_series"` with `"write_movies"` to run the movies action. The `params` field must always be `{}` — all configuration flows through the settings endpoint.
 
 **Quick API smoke test** (outside the plugin):
 ```bash

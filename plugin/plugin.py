@@ -730,6 +730,13 @@ class Plugin:
                     logger.info("[MOVIE %s] skip: missing_uuid", movie_id)
                 continue
 
+            tmdb_id = (movie.get("tmdb_id") or "").strip()
+            if not tmdb_id:
+                skipped += 1
+                reasons["missing_tmdb_id"] = reasons.get("missing_tmdb_id", 0) + 1
+                logger.info("[MOVIE %s] skip: no TMDB ID for '%s'", movie_id, movie.get("name"))
+                continue
+
             tmdb_data = None
             if tmdb_api_key and not dry_run:
                 name, year, tmdb_data = self._get_movie_name_and_year(movie, tmdb_api_key, tmdb_cache, logger, verbose)
@@ -737,10 +744,11 @@ class Plugin:
                 name = movie.get("name")
                 year = movie.get("year")
 
-            movie_folder_name = f"{safe_name(name or f'movie-{movie_id}')}{f' ({year})' if year else ''}"
+            movie_base_name = f"{safe_name(name or f'movie-{movie_id}')}{f' ({year})' if year else ''}"
+            movie_folder_name = f"{movie_base_name} [tmdbid={tmdb_id}]"
             movie_folder = os.path.join(root, movie_folder_name)
             ensure_dir(movie_folder)
-            filename = f"{movie_folder_name}.strm"
+            filename = f"{movie_base_name}.strm"
             filepath = os.path.join(movie_folder, filename)
             url = self._build_movie_url(dispatch_host, uuid)
 
@@ -838,9 +846,16 @@ class Plugin:
 
         for idx, series in enumerate(series_rows):
             series_id = series.get("id")
-            series_tmdb_id = series.get("tmdb_id")
             if idx > 0 and idx % 20 == 0:
                 logger.info("Progress: %d/%d series processed", idx, len(series_rows))
+
+            tmdb_id = (series.get("tmdb_id") or "").strip()
+            series_tmdb_id = tmdb_id
+            if not tmdb_id:
+                skipped += 1
+                reasons["missing_tmdb_id"] = reasons.get("missing_tmdb_id", 0) + 1
+                logger.info("[SERIES %s] skip: no TMDB ID for '%s'", series_id, series.get("name"))
+                continue
 
             tmdb_data = None
             if tmdb_api_key and not dry_run:
@@ -849,7 +864,8 @@ class Plugin:
                 series_name = series.get("name")
                 series_year = series.get("year")
 
-            series_dir_name = f"{safe_name(series_name or f'series-{series_id}')}{f' ({series_year})' if series_year else ''}"
+            series_base_name = f"{safe_name(series_name or f'series-{series_id}')}{f' ({series_year})' if series_year else ''}"
+            series_dir_name = f"{series_base_name} [tmdbid={tmdb_id}]"
             series_dir = os.path.join(root, series_dir_name)
 
             try:
@@ -902,14 +918,14 @@ class Plugin:
                             logger.info("[SERIES %s] skip S%02dE%02d: probe_failed %s", series_id, season_num, ep_num, url)
                         continue
 
-                    filename = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d}.strm"
+                    filename = f"{series_base_name} - S{season_num:02d}E{ep_num:02d}.strm"
                     filepath = os.path.join(season_dir, filename)
                     normalized_path = os.path.normpath(filepath)
                     live_paths.add(normalized_path)
 
                     # Remove any file for this episode that used the old title-based naming
                     # convention (e.g. "Series - S01E01 - Episode Title.strm") to avoid duplicates.
-                    old_prefix = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d} - "
+                    old_prefix = f"{series_base_name} - S{season_num:02d}E{ep_num:02d} - "
                     for fname in os.listdir(season_dir):
                         if fname.startswith(old_prefix) and fname.endswith((".strm", ".nfo")):
                             old_path = os.path.normpath(os.path.join(season_dir, fname))

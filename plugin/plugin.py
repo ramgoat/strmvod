@@ -946,11 +946,27 @@ class Plugin:
                             logger.info("[SERIES %s] skip S%02dE%02d: probe_failed %s", series_id, season_num, ep_num, url)
                         continue
 
-                    filename = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d} - {safe_name(ep_title)}.strm"
+                    filename = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d}.strm"
                     filepath = os.path.join(season_dir, filename)
-                    changed, reason = write_text_if_changed(filepath, url + "\n", dry_run)
                     normalized_path = os.path.normpath(filepath)
                     live_paths.add(normalized_path)
+
+                    # Remove any file for this episode that used the old title-based naming
+                    # convention (e.g. "Series - S01E01 - Episode Title.strm") to avoid duplicates.
+                    old_prefix = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d} - "
+                    for fname in os.listdir(season_dir):
+                        if fname.startswith(old_prefix) and fname.endswith(".strm"):
+                            old_path = os.path.normpath(os.path.join(season_dir, fname))
+                            if not dry_run:
+                                try:
+                                    os.remove(old_path)
+                                except OSError as remove_err:
+                                    logger.warning("[SERIES %s] could not remove old file %s: %s", series_id, old_path, remove_err)
+                            manifest_files.pop(old_path, None)
+                            if verbose:
+                                logger.info("[SERIES %s] removed old title-based file: %s", series_id, fname)
+
+                    changed, reason = write_text_if_changed(filepath, url + "\n", dry_run)
 
                     if changed and reason == "written":
                         if normalized_path in manifest_files:

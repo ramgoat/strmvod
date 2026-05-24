@@ -761,8 +761,6 @@ class Plugin:
                 else:
                     created += 1
                 manifest_files[normalized_path] = {"uuid": uuid, "type": "movie", "id": movie_id}
-                if write_nfo and tmdb_data:
-                    self._write_movie_nfo(filepath, tmdb_data, dry_run)
                 if verbose:
                     logger.info("[MOVIE %s] wrote %s", movie_id, filepath)
             else:
@@ -770,6 +768,11 @@ class Plugin:
                 reasons[reason] = reasons.get(reason, 0) + 1
                 if verbose and reason != 'unchanged':
                     logger.info("[MOVIE %s] skip %s (%s)", movie_id, filepath, reason)
+
+            if write_nfo and tmdb_data:
+                nfo_path = filepath.rsplit('.', 1)[0] + '.nfo'
+                if not os.path.exists(nfo_path):
+                    self._write_movie_nfo(filepath, tmdb_data, dry_run)
 
         manifest["files"] = manifest_files
         manifest["tmdb_cache"] = tmdb_cache
@@ -908,7 +911,7 @@ class Plugin:
                     # convention (e.g. "Series - S01E01 - Episode Title.strm") to avoid duplicates.
                     old_prefix = f"{series_dir_name} - S{season_num:02d}E{ep_num:02d} - "
                     for fname in os.listdir(season_dir):
-                        if fname.startswith(old_prefix) and fname.endswith(".strm"):
+                        if fname.startswith(old_prefix) and fname.endswith((".strm", ".nfo")):
                             old_path = os.path.normpath(os.path.join(season_dir, fname))
                             if not dry_run:
                                 try:
@@ -927,8 +930,6 @@ class Plugin:
                         else:
                             created += 1
                         manifest_files[normalized_path] = {"uuid": ep_uuid, "type": "episode", "series_id": series_id, "season": season_num, "episode": ep_num}
-                        if write_nfo and series_tmdb_id:
-                            self._write_episode_nfo(filepath, episode, season_num, tmdb_api_key, series_tmdb_id, logger, dry_run)
                         if verbose:
                             logger.info("[SERIES %s] wrote %s", series_id, filepath)
                     else:
@@ -936,6 +937,11 @@ class Plugin:
                         reasons[reason] = reasons.get(reason, 0) + 1
                         if verbose and reason != 'unchanged':
                             logger.info("[SERIES %s] skip %s (%s)", series_id, filepath, reason)
+
+                    if write_nfo and series_tmdb_id:
+                        nfo_path = filepath.rsplit('.', 1)[0] + '.nfo'
+                        if not os.path.exists(nfo_path):
+                            self._write_episode_nfo(filepath, episode, season_num, tmdb_api_key, series_tmdb_id, logger, dry_run)
 
         manifest["files"] = manifest_files
         manifest["tmdb_cache"] = tmdb_cache

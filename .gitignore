@@ -2,3 +2,4 @@ docker/.data
 /plugin/__pycache__
 /docker/.vod
 /docker/.emby-config
+/docker/.seerr-config

@@ -45,6 +45,7 @@ services:
     volumes:
       - ./.emby-config:/config
       - ./.vod:/mnt/vod
+      - ./.media:/mnt/media
     environment:
       - UID=1000
       - GID=1000

@@ -3,3 +3,4 @@ docker/.data
 /docker/.vod
 /docker/.emby-config
 /docker/.seerr-config
+docker/.media/
